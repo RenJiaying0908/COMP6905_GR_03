@@ -1,11 +1,13 @@
-# COMP6905_GR_03
-#1. Create a project on github
-#2. Make a web-based app that adapts to the distribution rate of mobile phones (web browser application)
-#3. A server and database are required (which server to choose?)
-#4. Which ski resort to choose?
-#5. Discuss with him or her the technology needed
-#6. One iteration goals:
-There is a server;
-There is a simple web (with some simple icons, which do not need to have functions);
-Some static data is required;
-Some static maps (how to implement maps? Can third-party libraries be used?);
+# Project COMP6905_GR_03
+
+## Goals:
+1. Create a project on GitHub.
+2. Develop a web-based application that adapts to the distribution rate of mobile phones (web browser application).
+3. Set up a server and database (which server to choose?).
+4. Determine the ski resort to focus on.
+5. Discuss the required technology with stakeholders.
+6. Achieve the following goals in one iteration:
+   - Set up a server.
+   - Create a simple web interface with basic icons (non-functional).
+   - Integrate static data.
+   - Implement static maps (consider using third-party libraries).
