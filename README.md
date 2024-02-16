@@ -1,5 +1,7 @@
 # Project COMP6905_GR_03
 
+> :warning: **Please pull to update your local before you push to make any changes**!
+
 ## Goals:
 1. Create a project on GitHub. ---- done
 2. Develop a web-based application that adapts to the distribution rate of mobile phones (web browser application).
