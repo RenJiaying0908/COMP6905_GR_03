@@ -11,8 +11,18 @@
    - Create a simple web interface with basic icons (non-functional).
    - Integrate static data.
    - Implement static maps (consider using third-party libraries).
+
   
 ## To do:
 1. confirm first iteration commitment. (what functions need to be done)
 2. determin the technical stack. contact with TA.
 3. Set up a server and database (which server to choose?).
+
+
+## Task assignment:
+1. Jiaying (plus one to two person) for web page.
+2. for web page, we can choose React or Angular, need to make a choice.
+3. Chang and jude for backend.
+4. for backend, we will Node JS, and database as mongoDB Atlas.
+5. We already have a server, which will be provided by jude.
+6. basically 2-3 person for backend and 2-3 person for web page. please choose which part you want to join.
