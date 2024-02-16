@@ -22,7 +22,7 @@
 ## Task assignment:
 1. Jiaying (plus one to two person) for web page.
 2. for web page, we can choose React or Angular, need to make a choice.
-3. Chang and jude for backend.
+3. Chang and jude for backend using expressJS.
 4. for backend, we will Node JS, and database as mongoDB Atlas.
 5. We already have a server, which will be provided by jude.
 6. basically 2-3 person for backend and 2-3 person for web page. please choose which part you want to join.
