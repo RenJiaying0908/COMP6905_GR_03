@@ -2,6 +2,12 @@
 
 > :warning: **Please pull to update your local before you push to make any changes**!
 
+
+## ENV prepare
+1. Download [NodeJS](https://nodejs.org/en)
+2. run '''npm install express'''
+3. TODO// add React related download here
+
 ## Goals:
 1. Create a project on GitHub. ---- done
 2. Develop a web-based application that adapts to the distribution rate of mobile phones (web browser application).
