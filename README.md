@@ -5,7 +5,7 @@
 
 ## ENV prepare
 1. Download [NodeJS](https://nodejs.org/en)
-2. run '''npm install express'''
+2. run ```npm install express```
 3. TODO// add React related download here
 
 ## Goals:
