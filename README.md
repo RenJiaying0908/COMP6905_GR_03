@@ -79,9 +79,11 @@
 }
 
 
-5. skier {
+5. skier*** {
    id:string,
    name:string,
    status:boolean
 }
+*** currently not necessary/maybe later
 ```
+
