@@ -3,10 +3,18 @@
 > :warning: **Please pull to update your local before you push to make any changes**!
 
 
-## ENV prepare
+## ENV preparation
 1. Download [NodeJS](https://nodejs.org/en)
 2. run ```npm install express```
-3. TODO// add React related download here
+3. TODO // add React related download here
+
+
+## Project Requirements
+1. Find best way from A to B.
+2. Slope has differnet difficulty (blue, red, black), skier should be able to specify which slopes to use.
+3. help the skier to find the right food place and public restrooms.
+4. The app will determine the location of the skier.
+
 
 ## Goals:
 1. Create a project on GitHub. ---- done
