@@ -11,7 +11,7 @@ class MessageHandler {
     }
 
     on_get_message(message, callback){
-
+        
     }
 
     on_json_message(message, callback){

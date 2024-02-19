@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const messageHandler = require('./Layer1/messageHandler');
+const messageHandler = require('./messaging/messageHandler');
 const react_app = express();
 const server_app = express();
 
@@ -14,7 +14,7 @@ server_app.use(express.json());
 server_app.get('/get-data', (req, res) => {
     //TODO, specify the req sub-type
     messageHandler.on_get_message(req.query, (result)=>{
-        res.json(result);
+        //res.json(result);
     });
 });
 

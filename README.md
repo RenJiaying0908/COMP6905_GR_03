@@ -42,3 +42,46 @@
 4. for backend, we will Node JS, and database as mongoDB Atlas.
 5. We already have a server, which will be provided by jude.
 6. basically 2-3 person for backend and 2-3 person for web page. please choose which part you want to join.
+
+
+## Data Structure
+
+```
+
+1. node: {
+   id:string,
+   lon:double,
+   lat:double,
+   node_type:string,
+   status:boolean
+}
+
+2. slope{
+   id:string
+   startNode:node,
+   endNode:node,
+   difficulty:difficulty_level,
+   status
+}
+
+
+3. node_type {
+   id:string,
+   name:string,
+   status:boolean
+}
+
+4. difficulty_level{
+   id:string,
+   hexColor:string,
+   name:string,
+   status:boolean
+}
+
+
+5. skier {
+   id:string,
+   name:string,
+   status:boolean
+}
+```
