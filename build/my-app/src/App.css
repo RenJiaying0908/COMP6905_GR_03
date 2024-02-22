@@ -1,0 +1,106 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+}
+
+header h1 {
+  margin: 0;
+}
+
+nav ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+nav ul li {
+  display: inline;
+  margin-right: 20px;
+}
+
+nav ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+main {
+  padding: 20px;
+}
+
+section {
+  margin-bottom: 30px;
+}
+
+.weather,
+.social-media,
+.contact,
+.company,
+.additional-links,
+.ski-photos,
+.ski-routes {
+  border: 1px solid #ccc;
+  padding: 20px;
+}
+
+footer {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.social-links a {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.contact address {
+  font-style: normal;
+}
+
+.contact address a {
+  color: #333;
+}
+
+.company ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.company ul li {
+  margin-bottom: 10px;
+}
+
+.ski-photos,
+.ski-routes {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ski-photos img {
+  width: 150px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+
+.ski-routes button {
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.ski-routes button:hover {
+  background-color: #555;
+}
