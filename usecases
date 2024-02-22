@@ -1,0 +1,55 @@
+We will be implementing a Skier-Routing app. 
+
+/*
+Many of the modern ski areas are widespread with dozens of chair-lifts/gondolas, sometimes up-to hundreds of kilometres of ski slopes and many dining establishments. 
+The app will help the avid skier to find the best way to get from point A to a point B. 
+The slopes are of different difficulty (blue, red and black) and the skier, depending on confidence/ability level, should be able to specify which slopes to use. 
+In a normal situation, moving up will involve lifts and the skiers will ski down the slope. But in some cases, the skier may decide to take the lift down 
+(e.g., if the only available slope is a challenging black one). The app should also help the skier to find the right food place and public restrooms.
+
+The app will determine the location of the skier. The Web-based app, should be targeted towards mobile phone. 
+
+Here is a link to one of the ski areas in the European Alps.
+*/
+
+Usecases:
+
+name: find route
+
+Precondition: User open the web application.
+
+Postcondition: 
+
+Scenario:
+1. User open web application.
+2. the application present a graph of all routes with difficulities, different color represent different difficulities.
+3. the User choose their abiliy level.
+4. User choose the location where they currently are.
+5. User choose another point where thwy want to go.
+6. the application will give a suggestion about most fessible path.
+
+Exception cases: 
+1. If a path can not be used.
+  a. if there is another useable path, the application will show another path.
+  b. if there is no other useable path, then the application will notify the user there is no fessible path.
+2. If there is no fessible path.
+  a. the application will notify the user.
+
+--------------------------------------------
+
+name: find food place/public restrooms
+
+Precondition: 
+
+Postcondition:
+  
+Scenario:
+1. the application will show all the food place/public restroom in a graph alone with the routes.
+2. User select a food place/public restroom.
+3. the application will show some information about this food place/public restroom.
+4. User confirm to go this food place/public restroom.
+5. the application will suggest a best way to go this food place/public restroom.
+
+Exception cases:
+1. if the food place/public restroom can not be accessed. 
+  a. a notification will be presented.
