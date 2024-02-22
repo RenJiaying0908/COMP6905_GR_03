@@ -1,0 +1,28 @@
+We will be implementing a Skier-Routing app. 
+
+/*
+Many of the modern ski areas are widespread with dozens of chair-lifts/gondolas, sometimes up-to hundreds of kilometres of ski slopes and many dining establishments. 
+The app will help the avid skier to find the best way to get from point A to a point B. 
+The slopes are of different difficulty (blue, red and black) and the skier, depending on confidence/ability level, should be able to specify which slopes to use. 
+In a normal situation, moving up will involve lifts and the skiers will ski down the slope. But in some cases, the skier may decide to take the lift down 
+(e.g., if the only available slope is a challenging black one). The app should also help the skier to find the right food place and public restrooms.
+
+The app will determine the location of the skier. The Web-based app, should be targeted towards mobile phone. 
+
+Here is a link to one of the ski areas in the European Alps.
+*/
+
+Usecases:
+
+name: find route
+
+precondition:
+
+postcondition:
+
+scenario:
+1. User open web application.
+2. the application present a map of all routes, with difficulities.
+3. User choose the location where they currently are. 
+3. User choose another point where thwy want to go.
+4. the application will give a suggestion about shortest path.
