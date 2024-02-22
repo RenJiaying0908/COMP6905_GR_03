@@ -25,7 +25,7 @@ class MessageHandler {
 
 function getMessageId() {
     // generate unique id.
-}  
+}
 
 const handler = new MessageHandler();
 module.exports = handler;
