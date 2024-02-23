@@ -1,0 +1,24 @@
+.content-page {
+  font-family: 'Arial', sans-serif;
+  text-align: center;
+  padding: 40px;
+  background-color: #f0f3f5;
+}
+
+.content-page h1 {
+  font-size: 48px;
+  color: #273c75;
+  margin-bottom: 20px;
+}
+
+.content-page h2 {
+  font-size: 36px;
+  color: #353b48;
+  margin-bottom: 15px;
+}
+
+.content-page p {
+  font-size: 18px;
+  color: #4a4a4a;
+  margin-bottom: 10px;
+  }
