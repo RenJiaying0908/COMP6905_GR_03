@@ -1,0 +1,48 @@
+.live-info-section {
+  text-align: center;
+  padding: 20px;
+  background-color: #ecf0f1;
+}
+
+.cards-container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.info-card {
+  width: 240px;
+  margin: 0 10px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.info-image {
+  height: 140px;
+  background-size: cover;
+  background-position: center;
+}
+
+.info-content h3 {
+  color: #2c3e50;
+  padding: 10px;
+}
+
+.info-content p {
+  padding: 0 10px 20px;
+  color: #7f8c8d;
+  font-size: 0.9em;
+}
+
+@media (max-width: 768px) {
+  .cards-container {
+    flex-direction: column;
+  }
+
+  .info-card {
+    width: auto;
+    margin-bottom: 20px;
+  }
+}

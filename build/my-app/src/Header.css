@@ -1,0 +1,46 @@
+.site-header {
+  background: url('/public/background.jpg') no-repeat center center;
+  background-size: cover;
+  color: #000000;
+}
+
+.site-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #000000;
+  padding: 0 15px;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+.nav-icons {
+
+}
+
+.hero h1,
+.hero h2 {
+  text-align: center;
+  margin: 0;
+}
+
+.hero h1 {
+  font-size: 2.5em;
+}
+
+.hero h2 {
+  font-size: 2em;
+  margin-top: 10px;
+}
