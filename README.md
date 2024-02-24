@@ -3,10 +3,19 @@
 > :warning: **Please pull to update your local before you push to make any changes**!
 
 
-## ENV preparation
-1. Download [NodeJS](https://nodejs.org/en)
-2. run ```npm install express```
-3. TODO // add React related download here
+## How to run
+0. install http post library axios ```npm install axios```
+0. install cors to avoid Cross-Origin Resource Sharing error in local host```npm install cors```
+
+1. prepare react env ```npm install react-scripts --save```
+2. build react app ```npm run build```
+
+3. Download [NodeJS](https://nodejs.org/en)
+4. install expressJS ```npm install express```
+5. in the server folder run server ```node main.js```
+
+6. type ```http://localhost:3000/``` in your browser
+
 
 
 ## Project Requirements
