@@ -4,8 +4,8 @@
 
 
 ## How to run
-0. install http post library axios ```npm install axios```
-0. install cors to avoid Cross-Origin Resource Sharing error in local host```npm install cors```
+0. under ```build/my-app``` install http post library axios ```npm install axios```
+0. under ```COMP6905_GR_03```install cors to avoid Cross-Origin Resource Sharing error in local host```npm install cors```
 
 1. prepare react env ```npm install react-scripts --save```
 2. build react app ```npm run build```
