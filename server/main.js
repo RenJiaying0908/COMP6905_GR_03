@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const messageHandler = require('./messaging/messageHandler');
 const react_app = express();
 const server_app = express();
@@ -7,8 +8,9 @@ const server_app = express();
 html_port = process.env.PORT || 3000;
 server_port = process.env.SERVER_PORT || 3001;
 
-react_app.use(express.static(path.join(__dirname, '..', 'build')));
+react_app.use(express.static(path.join(__dirname, '..', 'build/my-app/build')));
 server_app.use(express.json());
+server_app.use(cors());
 
 //handle get-data request, the result will be json string.
 server_app.get('/get-data', (req, res) => {
@@ -36,7 +38,7 @@ react_app.listen(html_port, () => {
 
 //the entrance of web app is 'index.html' in 'build' folder
 react_app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'build/my-app/build', 'index.html'));
 });
 
 //Run app, then load http://localhost:port in a browser to see the output.
