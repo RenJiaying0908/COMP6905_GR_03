@@ -4,6 +4,6 @@
     "express": "^4.18.3"
   },
   "scripts": {
-    "install-client": "cd build/my-app && npm install"
+    "install": "cd build/my-app && npm install"
   }
 }
