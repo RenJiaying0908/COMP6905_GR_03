@@ -7,7 +7,7 @@
 
 1. Download [NodeJS](https://nodejs.org/en)
 2. run ```npm install``` to download all dependencies.
-4. in the server folder run server ```node main.js```
+4. in the ```./server``` folder start server ```node main.js```, or using eclipse run node application.
 5. type ```http://localhost:3000/``` in your browser
 
 
