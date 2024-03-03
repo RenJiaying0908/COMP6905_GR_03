@@ -4,18 +4,13 @@
 
 
 ## How to run
-0. under ```build/my-app``` install http post library axios ```npm install axios```
-0. unser ```build/my-app``` install ```npm install leaflet```
-0. under ```COMP6905_GR_03```install cors to avoid Cross-Origin Resource Sharing error in local host```npm install cors```
 
-1. prepare react env ```npm install react-scripts --save```
-2. build react app ```npm run build```
+1. Download [NodeJS](https://nodejs.org/en)
+2. run ```npm install``` to download all dependencies.
+3. build react app ```npm run build```
+4. in the server folder run server ```node main.js```
 
-3. Download [NodeJS](https://nodejs.org/en)
-4. install expressJS ```npm install express```
-5. in the server folder run server ```node main.js```
-
-6. type ```http://localhost:3000/``` in your browser
+5. type ```http://localhost:3000/``` in your browser
 
 
 
