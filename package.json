@@ -2,5 +2,8 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.3"
+  },
+  "scripts": {
+    "install-client": "cd build/my-app && npm install"
   }
 }
