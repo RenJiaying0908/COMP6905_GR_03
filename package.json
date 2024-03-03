@@ -4,6 +4,7 @@
     "express": "^4.18.3"
   },
   "scripts": {
-    "install": "cd build/my-app && npm install"
+    "install": "cd build/my-app && npm install",
+    "start": "node ./server/main.js"
   }
 }
