@@ -7,21 +7,23 @@
 
 1. Download [NodeJS](https://nodejs.org/en)
 2. run ```npm install``` to download all dependencies.
-3. build react app ```npm run build```
 4. in the server folder run server ```node main.js```
-
 5. type ```http://localhost:3000/``` in your browser
 
 
-
 ## Project Requirements
-1. Find best way from A to B.
-2. Slope has differnet difficulty (blue, red, black), skier should be able to specify which slopes to use.
-3. help the skier to find the right food place and public restrooms.
-4. The app will determine the location of the skier.
+
+We will be implementing a Skier-Routing app. 
+
+Many of the modern ski areas are widespread with dozens of chair-lifts/gondolas, sometimes up-to hundreds of kilometres of ski slopes and many dining establishments. The app will help the avid skier to find the best way to get from point A to a point B. The slopes are of different difficulty (blue, red and black) and the skier, depending on confidence/ability level, should be able to specify which slopes to use. In a normal situation, moving up will involve lifts and the skiers will ski down the slope. But in some cases, the skier may decide to take the lift down (e.g., if the only available slope is a challenging black one). The app should also help the skier to find the right food place and public restrooms.
+
+The app will determine the location of the skier. The Web-based app, should be targeted towards mobile phone. 
+
+Here is a [link](https://www.snow-space.com/en/winter/ski-resort-salzburg/facts/piste-map) to one of the ski areas in the European Alps.
 
 
 ## Goals:
+
 1. Create a project on GitHub. ---- done
 2. Develop a web-based application that adapts to the distribution rate of mobile phones (web browser application).
 3. Set up a server and database (which server to choose?).
@@ -32,21 +34,6 @@
    - Create a simple web interface with basic icons (non-functional).
    - Integrate static data.
    - Implement static maps (consider using third-party libraries).
-
-  
-## To do:
-1. confirm first iteration commitment. (what functions need to be done)
-2. determin the technical stack. contact with TA.
-3. Set up a server and database (which server to choose?).
-
-
-## Task assignment:
-1. Jiaying (plus one to two person) for web page.
-2. for web page, we can choose React or Angular, need to make a choice.
-3. Chang and jude for backend using expressJS.
-4. for backend, we will Node JS, and database as mongoDB Atlas.
-5. We already have a server, which will be provided by jude.
-6. basically 2-3 person for backend and 2-3 person for web page. please choose which part you want to join.
 
 
 ## Data Structure
