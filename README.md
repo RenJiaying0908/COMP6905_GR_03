@@ -6,9 +6,15 @@
 ## How to run
 
 1. Download [NodeJS](https://nodejs.org/en)
-2. in root folder run ```npm install``` to download all dependencies.
-4. for eclipse, open ```main.js``` under ```./server``` and run node application. **OR** in terminal project root folder type ```npm run start``` to run server.
-5. type ```http://localhost:3000/``` in your browser
+
+### Using local env
+1. in root folder run ```npm install``` to download all dependencies.
+2. for eclipse, open ```main.js``` under ```./server``` and run node application. **OR** in terminal project root folder type ```npm run start``` to run server.
+3. type ```http://localhost:3000/``` in your browser
+
+### Or using docker
+1. Download [Docker](https://www.docker.com/)
+2. run ```docker run -p 3000:3000 chwan886/image_6905_group03``` to download image and run the project.
 
 
 ## Project Requirements
