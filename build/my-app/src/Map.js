@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import React, { useState, useRef, useEffect } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,6 +7,7 @@ import { faSkiing, faMountain, faStore, faHospital, faCoffee, faSchool } from '@
 import L from 'leaflet';
 import { renderToString } from 'react-dom/server'; 
 import './SkiResortMap.css'; 
+import postData from './messenger';
 
 library.add(faSkiing, faMountain, faStore, faHospital, faCoffee, faSchool);
 
@@ -26,7 +27,8 @@ const SkiResortMap = () => {
     duration: 'Any',
   });
   const [showSkiMap, setShowSkiMap] = useState(true); 
-
+  const [polylines, setPolylines] = useState({});
+  const mapRef = useRef(null);
   const handleStartingLocationChange = (event) => {
     setStartingLocation(event.target.value);
   };
@@ -47,14 +49,6 @@ const SkiResortMap = () => {
     setShowSkiMap(!showSkiMap);
   };
 
-  const handleSearch = () => {
-    console.log('Searching for routes with the following parameters:', {
-      startingLocation,
-      destination,
-      preferences,
-    });
-  };
-
   const locations = [
     { id: 1, name: 'Base Lodge', status: 'open', coordinates: [51.35, -116.25], icon: faMountain },
     { id: 2, name: 'Mountain Peak', status: 'open', coordinates: [51.38, -116.22], icon: faMountain },
@@ -68,16 +62,75 @@ const SkiResortMap = () => {
   ];
 
   const connections = [
-    { from: 1, to: 2, color: 'blue' },
-    { from: 1, to: 3, color: 'red' },
-    { from: 2, to: 4, color: 'black' },
-    { from: 1, to: 5, color: 'red' },
-    { from: 3, to: 6, color: 'blue' },
-    { from: 2, to: 7, color: 'black' },
-    { from: 3, to: 8, color: 'blue' },
-    { from: 5, to: 9, color: 'red' },
+    { from: 1, to: 2, color: 'green' },
+    { from: 1, to: 3, color: 'green'},
+    { from: 2, to: 4, color: 'green' },
+    { from: 1, to: 5, color: 'green' },
+    { from: 3, to: 6, color: 'green' },
+    { from: 2, to: 7, color: 'green' },
+    { from: 3, to: 8, color: 'green' },
+    { from: 5, to: 9, color: 'green' },
 
   ];
+
+  const handleSearch = () => {
+    const connectionInfo = connections.find(connection => connection.from === 1 && connection.to === 2);
+    
+    if (connectionInfo) {
+      const fromLocation = locations.find(location => location.id === connectionInfo.from)?.coordinates;
+      const toLocation = locations.find(location => location.id === connectionInfo.to)?.coordinates;
+      
+      if (fromLocation && toLocation) {
+        const routeCoordinates = [fromLocation, toLocation];
+        
+        displayRoute(routeCoordinates, 'red', startingLocation, destination);
+      } else {
+        console.log('One of the route coordinates not found.');
+      }
+    } else {
+      console.log('Connection not found.');
+    }
+  };
+    // const requestBody = {
+    //   susername: 'user',
+    //   password: '123'
+
+    // };
+  
+    // postData(requestBody, (error, data) => {
+    //   if (error) {
+    //     console.error('Error fetching the route:', error);
+    //     alert("Error: " + error.message);
+    //   } else {
+    //     console.log('Route data received:', data);
+    //     displayRoute(data.route); 
+    //   }
+    // });
+  
+    const [connectionColors, setConnectionColors] = useState(
+      connections.reduce((acc, connection) => {
+        const key = `${connection.from}-${connection.to}`;
+        acc[key] = connection.color; 
+        return acc;
+    }, {}));
+
+    const changeConnectionColor = (from, to, newColor) => {
+      const key = `${from}-${to}`;
+      setConnectionColors(prevColors => ({
+        ...prevColors,
+        [key]: newColor 
+      }));
+    };
+
+    const displayRoute = (routeCoordinates, color, fromId, toId) => {
+      if(fromId != '' && toId != ''){
+        changeConnectionColor(1, 2, 'red');
+      }else{connections.forEach(connection => {
+        changeConnectionColor(connection.from, connection.to, connection.color);
+      });
+      return; // 直接返回，不执行后面的代码
+    }
+    };
 
   const [mapOptions] = useState({
     center: [51.35, -116.25], // Initial center
@@ -122,8 +175,15 @@ const SkiResortMap = () => {
         {showSkiMap ? 'Show Amenities Map' : 'Show Ski Map'}
       </button>
     </div>
-      <MapContainer center={mapOptions.center} zoom={mapOptions.zoom} minZoom={mapOptions.minZoom} style={{ height: '500px', width: '100%' }} maxBounds={mapOptions.bounds}>
-        {showSkiMap ? (
+    <MapContainer 
+      center={mapOptions.center} 
+      zoom={mapOptions.zoom} 
+      minZoom={mapOptions.minZoom} 
+      style={{ height: '500px', width: '100%' }} 
+      maxBounds={mapOptions.bounds}
+      whenCreated={mapInstance => { mapRef.current = mapInstance; }}
+    >
+      {showSkiMap ? (
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         ) : (
           <TileLayer url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png" />
@@ -135,9 +195,9 @@ const SkiResortMap = () => {
             </Popup>
           </Marker>
         ))}
-
-                {connections.map((connection, index) => (
-          <Polyline key={index} positions={[locations[connection.from - 1].coordinates, locations[connection.to - 1].coordinates]} color={connection.color} />
+          {connections.map((connection, index) => (
+            
+          <Polyline key={`${connection.from}-${connection.to}-${connectionColors[`${connection.from}-${connection.to}`]}`} positions={[locations[connection.from - 1].coordinates, locations[connection.to - 1].coordinates]} color={connectionColors[`${connection.from}-${connection.to}`]} />
         ))}
       </MapContainer>
     </div>
