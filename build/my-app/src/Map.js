@@ -82,7 +82,6 @@ const SkiResortMap = () => {
       
       if (fromLocation && toLocation) {
         const routeCoordinates = [fromLocation, toLocation];
-        
         displayRoute(routeCoordinates, 'red', startingLocation, destination);
       } else {
         console.log('One of the route coordinates not found.');
@@ -128,7 +127,7 @@ const SkiResortMap = () => {
       }else{connections.forEach(connection => {
         changeConnectionColor(connection.from, connection.to, connection.color);
       });
-      return; // 直接返回，不执行后面的代码
+      return; 
     }
     };
 
