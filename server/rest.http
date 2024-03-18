@@ -6,7 +6,7 @@ POST http://localhost:3001/create_resort
 Content-Type: application/json
 
 {
-    "name":"Group 3 SKI Resort",
+    "name":"Group 3 SKI Resort 2",
     "status":true,
     "details":"lorem ipsum...."
 }
@@ -38,11 +38,34 @@ POST http://localhost:3001/create_facility
 Content-Type: application/json
 
 {
-    "name":"Open Source Restaurant",
+    "name":"Open Source Restaurant 2",
     "facilityType":"X", 
-    "description":"Assorted coffee maker...",
+    "description":"Assorted noodles maker...",
     "status":true
 }
 
 ###  Get Facilities
 GET http://localhost:3001/get_facilities
+
+
+
+###  test run
+POST http://localhost:3001/submit-data
+Content-Type: application/json
+
+{
+    "type":"find_route",
+    "data":{
+        "from":"1",
+        "to":"2"
+    }
+}
+
+
+###  test run
+POST http://localhost:3001/submit-data
+Content-Type: application/json
+
+{
+    "type":"find_facilities"
+}

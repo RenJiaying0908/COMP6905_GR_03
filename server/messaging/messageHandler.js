@@ -5,6 +5,7 @@ class MessageHandler {
     constructor(){
         this.map = new Map();
         event.on("POSTRESP", (res) => {
+            console.log("POSTRESP received.");
             const callback = this.map.get(res.id);
             if(callback)
             {
@@ -30,12 +31,12 @@ class MessageHandler {
         event.emit("POST", mes);
 
         //for test
-        console.log("received client data: "+data.username);
-        const res = {
-            key: "this is message from the server!"
-        }
-        console.log("messageHandler received a message, will send test message back to client.");
-        callback(res);
+        //console.log("received client data: "+data.username);
+        //const res = {
+        //    key: "this is message from the server!"
+        //}
+        //console.log("messageHandler received a message, will send test message back to client.");
+        //callback(res);
     }
 }
 
