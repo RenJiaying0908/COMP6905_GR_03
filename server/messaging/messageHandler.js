@@ -1,4 +1,6 @@
 const event = require('../event');
+const Example = require('../core/controller/example_controller');
+const example = new Example();
 
 class MessageHandler {
 
@@ -23,7 +25,10 @@ class MessageHandler {
         const id = getMessageId();
         this.map.set(id, callback);
         //the message will be converted to object from json.
-        const mes = {id: id};
+        const mes = {
+            id: id,
+            data: data
+        };
         event.emit("POST", mes);
 
         //for test
@@ -38,7 +43,7 @@ class MessageHandler {
 
 function getMessageId() {
     // generate unique id.
-    return 1;
+    return Date.now();
 }
 
 const handler = new MessageHandler();

@@ -74,6 +74,25 @@ const SkiResortMap = () => {
   ];
 
   const handleSearch = () => {
+
+    const requestBody = {
+      type: "find_route",
+      data: {
+        from: "1",
+        to: "2",
+      }
+    }
+
+    postData(requestBody, (error, data)=>{
+        if(error)
+        {
+            console.error('Error fetching the route:', error);
+            alert("Error: " + error.message);
+        }else{
+            
+        }
+    })
+
     const connectionInfo = connections.find(connection => connection.from === 1 && connection.to === 2);
     
     if (connectionInfo) {
