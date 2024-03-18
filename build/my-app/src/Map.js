@@ -161,24 +161,26 @@ const SkiResortMap = () => {
     <div className="ski-resort-map-container">
       <div className="search-form">
         <input
+          style={{ width: '80%' }}
           type="text"
           placeholder="Starting Location"
           value={startingLocation}
           onChange={handleStartingLocationChange}
         />
         <input
+          style={{ width: '80%' }}
           type="text"
           placeholder="Destination"
           value={destination}
           onChange={handleDestinationChange}
         />
-        <select name="difficulty" value={preferences.difficulty} onChange={handlePreferencesChange}>
+        <select style={{ width: '85%' }} name="difficulty" value={preferences.difficulty} onChange={handlePreferencesChange}>
           <option value="Any">Difficulty: Any</option>
           <option value="Beginner">Beginner</option>
           <option value="Intermediate">Intermediate</option>
           <option value="Advanced">Advanced</option>
         </select>
-        <select name="duration" value={preferences.duration} onChange={handlePreferencesChange}>
+        <select style={{ width: '85%' }} name="duration" value={preferences.duration} onChange={handlePreferencesChange}>
           <option value="Any">Duration: Any</option>
           <option value="Short">Short</option>
           <option value="Medium">Medium</option>
