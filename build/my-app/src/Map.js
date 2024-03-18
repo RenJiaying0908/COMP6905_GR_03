@@ -76,10 +76,9 @@ const SkiResortMap = () => {
   const handleSearch = () => {
 
     const requestBody = {
-      type: "find_route",
+      type: "find_facilities",
       data: {
-        from: "1",
-        to: "2",
+
       }
     }
 
@@ -89,7 +88,7 @@ const SkiResortMap = () => {
             console.error('Error fetching the route:', error);
             alert("Error: " + error.message);
         }else{
-            
+
         }
     })
 

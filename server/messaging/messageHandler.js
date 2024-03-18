@@ -1,7 +1,5 @@
 const event = require('../event');
-const Example = require('../core/controller/example_controller');
-const example = new Example();
-
+const routing_controller = require('../core/controller/routing_controller');
 class MessageHandler {
 
     constructor(){
