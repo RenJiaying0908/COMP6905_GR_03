@@ -55,6 +55,8 @@ server_app.get('/get-data', (req, res) => {
 server_app.post('/submit-data', express.json(), (req, res) => {
     const data = req.body;
     messageHandler.on_json_message(data, (result) => {
+        console.log("sending response message. ");
+        console.log(result);
         res.json(result);
     });
 });

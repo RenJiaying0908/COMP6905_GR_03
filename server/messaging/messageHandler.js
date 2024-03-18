@@ -6,10 +6,12 @@ class MessageHandler {
         this.map = new Map();
         event.on("POSTRESP", (res) => {
             console.log("POSTRESP received.");
+            console.log(res);
             const callback = this.map.get(res.id);
             if(callback)
             {
-                callback(res.body);
+                console.log("callback found");
+                callback(res.data);
             }else{
                 console.log("callback not found for msg id: " + res.id);
             }
