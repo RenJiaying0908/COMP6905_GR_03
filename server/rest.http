@@ -1,0 +1,48 @@
+### PING Server
+GET http://localhost:3001/ping_server
+
+###  Create SKI Resort
+POST http://localhost:3001/create_resort
+Content-Type: application/json
+
+{
+    "name":"Group 3 SKI Resort",
+    "status":true,
+    "details":"lorem ipsum...."
+}
+
+
+###  add skill level
+POST http://localhost:3001/add_skill_level
+Content-Type: application/json
+
+{
+    "name":"Intermediate",
+    "description":"lorem ipsum level 2"
+}
+
+
+###  Create Skier
+POST http://localhost:3001/create_skier
+Content-Type: application/json
+
+{
+    "name":"Jude Bellingham",
+    "age":55,
+    "skillLevel":"65f7b6cb37ca6ad818761f62",
+    "status":true
+}
+
+###  Create Facility
+POST http://localhost:3001/create_facility
+Content-Type: application/json
+
+{
+    "name":"Open Source Restaurant",
+    "facilityType":"X", 
+    "description":"Assorted coffee maker...",
+    "status":true
+}
+
+###  Get Facilities
+GET http://localhost:3001/get_facilities
