@@ -1,11 +1,12 @@
 const event = require("../../event");
+const constants = require("../../messaging/raw");
 const SkiResort = require("../model/ski_resort");
 const Facility = require("../model/facility");
 
 
 class RoutingController {
   constructor() {
-    event.on("POST", (mes) => {
+    event.on(constants.EVENT_IN, (mes) => {
       console.log(
         "post message received, id: ",
         mes.id,
@@ -20,7 +21,7 @@ class RoutingController {
       //}
       //}
       //event.emit(res)
-      if (mes.data.type == "find_facilities") {
+      if (mes.data.type == constants.FIND_FACILITIES) {
         console.log("****");
         this.getAllFacilities(mes);
       }
@@ -52,7 +53,7 @@ class RoutingController {
             results:results
           }
         }
-        event.emit("POSTRESP", res);
+        event.emit(constants.EVENT_OUT, res);
       } catch (error) {
         console.log(error.message);
       }

@@ -1,10 +1,11 @@
 const event = require('../event');
+const constants = require('./raw');
 const routing_controller = require('../core/controller/routing_controller');
 class MessageHandler {
 
     constructor(){
         this.map = new Map();
-        event.on("POSTRESP", (res) => {
+        event.on(constants.EVENT_OUT, (res) => {
             console.log("POSTRESP received.");
             console.log(res);
             const callback = this.map.get(res.id);
@@ -30,7 +31,7 @@ class MessageHandler {
             id: id,
             data: data
         };
-        event.emit("POST", mes);
+        event.emit(constants.EVENT_IN, mes);
 
         //for test
         //console.log("received client data: "+data.username);
