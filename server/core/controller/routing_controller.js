@@ -1,7 +1,7 @@
 const event = require("../../event");
 const constants = require("../../messaging/raw");
 const SkiResort = require("../model/ski_resort");
-const Facility = require("../model/facility");
+const RouteNode = require("../model/node");
 
 
 class RoutingController {
@@ -13,22 +13,33 @@ class RoutingController {
         ", type: ",
         mes.data.type
       );
-      //database query. -> result.
-      //res{
-      //id:mes.id
-      //data:{
-      //    options
-      //}
-      //}
-      //event.emit(res)
-      if (mes.data.type == constants.FIND_FACILITIES) {
-        console.log("****");
-        this.getAllFacilities(mes);
+      if (mes.data.type == constants.FIND_ROUTE) {
+        this.findRoutes(mes);
+      }else if(mes.data.type == constants.GET_ROUTE) {
+        this.getRoutes(mes);
+      }else if(mes.data.type == constants.ADD_NODE){
+        this.addNodes(mes);
       }
     });
   }
 
-  async addSkiResort() {
+  async addNodes(message){
+    try {
+      const node = new RouteNode(message.data.data);
+      const result = await node.save();
+      const res = {
+        id:message.id,
+        data:{
+          results:result
+        }
+      }
+      event.emit(constants.EVENT_OUT, res);
+    }catch(error) {
+      console.log(error.message);
+    }
+  }
+
+  async getRoutes(message) {
     try {
       const resort = new SkiResort(req.body);
       const result = await resort.save();
@@ -43,23 +54,22 @@ class RoutingController {
     }
   }
 
-  async getAllFacilities(message) {
-      try {
-        const results =  await Facility.find({}, { __v: 0 });
-        console.log(results);
-        const res = {
-          id:message.id,
-          data:{
-            results:results
-          }
-        }
-        event.emit(constants.EVENT_OUT, res);
-      } catch (error) {
-        console.log(error.message);
-      }
+  async findRoutes(message) {
+    try {
+      const resort = new SkiResort(req.body);
+      const result = await resort.save();
+      //event.emit();
+      res.send({
+        resp_code: "000",
+        message: "success",
+        data: result,
+      });
+    } catch {
+      console.log("There was a problem creating the resort...");
     }
+  }
   
 }
 
-const ex = new RoutingController();
-module.exports = ex;
+const rc = new RoutingController();
+module.exports = rc;

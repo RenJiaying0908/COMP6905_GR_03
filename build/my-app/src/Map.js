@@ -61,6 +61,7 @@ const SkiResortMap = () => {
     { id: 9, name: 'First Aid Station', status:'open', coordinates: [51.36, -116.27], icon: faHospital },
   ];
 
+  //slopes
   const connections = [
     { from: 1, to: 2, color: 'green' },
     { from: 1, to: 3, color: 'green'},

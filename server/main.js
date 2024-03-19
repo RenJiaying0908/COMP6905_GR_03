@@ -9,6 +9,7 @@ const SkiResortController = require("./core/controller/ski_resort_controller");
 const SkillLevelController = require("./core/controller/skill_level_controller");
 const SkierController = require("./core/controller/skier_controller");
 const FacilityController = require("./core/controller/facility_controller");
+const RoutingController = require("./core/controller/routing_controller");
 
 
 
@@ -27,19 +28,19 @@ server_app.get('/ping_server', (req, res) => {
 });
 
 //create SKI Resort
-server_app.post('/create_resort', SkiResortController.addSkiResort);
+// server_app.post('/create_resort', SkiResortController.addSkiResort);
 
-//create Skill Levels
-server_app.post('/add_skill_level', SkillLevelController.addSkillLevel);
+// //create Skill Levels
+// server_app.post('/add_skill_level', SkillLevelController.addSkillLevel);
 
-//create skier
-server_app.post('/create_skier', SkierController.addSkier);
+// //create skier
+// server_app.post('/create_skier', SkierController.addSkier);
 
-//create new facility
-server_app.post('/create_facility', FacilityController.addFacility);
+// //create new facility
+// server_app.post('/create_facility', FacilityController.addFacility);
 
-//fetch all facilities
-server_app.get('/get_facilities', FacilityController.getAllFacilities);
+// //fetch all facilities
+// server_app.get('/get_facilities', FacilityController.getAllFacilities);
 
 
 

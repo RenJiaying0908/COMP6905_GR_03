@@ -1,30 +1,59 @@
+const event = require("../../event");
+const constants = require("../../messaging/raw");
 const Facility = require("../model/facility");
 
-module.exports = {
-  addFacility: async (req, res, next) => {
-    try {
-      const facility = new Facility(req.body);
-      const result = await facility.save();
-      res.send({
-        resp_code: "000",
-        message: "success",
-        data: result,
-      });
-    } catch {
-      console.log("There was a problem creating the facility...");
-    }
-  },
 
-  getAllFacilities: async (req, res, next) => {
-    try {
-      const results = await Facility.find({}, { __v: 0 });
-      res.send({
-        resp_code: "000",
-        message: "success",
-        data: results,
-      });
-    } catch (error) {
-      console.log(error.message);
+class FacilityController {
+  constructor() {
+    event.on(constants.EVENT_IN, (mes) => {
+      console.log(
+        "post message received, id: ",
+        mes.id,
+        ", type: ",
+        mes.data.type
+      );
+      if (mes.data.type == constants.FIND_FACILITIES) {
+        this.getAllFacilities(mes);
+      }else if(mes.data.type == constants.ADD_FACILITY){
+        this.addFacility(mes)
+      }
+    });
+  }
+
+  async getAllFacilities(message) {
+      try {
+        const results =  await Facility.find({}, { __v: 0 });
+        const res = {
+          id:message.id,
+          data:{
+            results:results
+          }
+        }
+        event.emit(constants.EVENT_OUT, res);
+      } catch (error) {
+        console.log(error.message);
+      }
     }
-  },
-};
+
+    async addFacility(message) {
+      try {
+        const results =  await Facility.find({}, { __v: 0 });
+        console.log(results);
+        const res = {
+          id:message.id,
+          data:{
+            results:results
+          }
+        }
+        event.emit(constants.EVENT_OUT, res);
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
+
+  
+}
+
+const fc = new FacilityController();
+module.exports = fc;
