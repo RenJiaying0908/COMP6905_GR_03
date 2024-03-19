@@ -5,21 +5,61 @@ const RouteNode = require("../model/node");
 const Slope = require("../model/slope");
 
 class Node {
-  constructor(id, neighbors = []) {
+  constructor(id, neighbors = {}) {
     this.id = id;
     this.neighbors = neighbors;
   }
 }
 
-async function findAllPaths(graph, startId, endId) {
+const routeMap = new Map();
+
+function cacheNodes(nodes){
+    if(nodes)
+    {
+        for(const node of nodes)
+        {
+            routeMap[node._id] = new Node(node._id.toString(), new Map());
+        }
+    }
+}
+
+function cacheRoutes(routes){
+    console.log("cache routemap");
+    console.log(routeMap);
+    if(routes)
+    {
+        for(const route of routes)
+        {
+            const fromNode = routeMap[route.fromNode.toString()];
+            const toNode = routeMap[route.toNode.toString()];
+            if(!fromNode.neighbors[route.toNode.toString()])
+            {
+                fromNode.neighbors[route.toNode.toString()] = new Set();
+            }
+            fromNode.neighbors[route.toNode.toString()].add(route._id.toString())
+            if(!toNode.neighbors[route.toNode.toString()])
+            {
+                toNode.neighbors[route.toNode.toString()] = new Set();
+            }
+            toNode.neighbors[route.toNode.toString()].add(route._id.toString());
+        }
+        console.log(routeMap);
+    }
+}
+
+function findAllPaths(startId, endId) {
   let visited = new Set();
   let paths = [];
-  dfs(graph, startId, endId, visited, [], paths);
+  dfs(startId, endId, visited, paths);
   return paths;
 }
 
-function dfs(graph, currentId, endId, visited, path, paths) {
+function dfs(currentId, endId, visited, path, paths) {
   console.log(`Visiting node ${currentId}, path so far: ${path.join(" -> ")}`);
+  if(currentId == endId)
+  {
+
+  }
   path.push(currentId);
   visited.add(currentId);
 
@@ -109,7 +149,8 @@ class RoutingController {
           },
         },
       };
-
+      cacheNodes(nodes);
+      cacheRoutes(slopes);
       event.emit(constants.EVENT_OUT, res);
     } catch (error) {
       console.error(error.message);
@@ -139,30 +180,13 @@ class RoutingController {
 
   async getNodeIds(message) {
     try {
-      console.log("*************");
-      const nodesData = await RouteNode.find({}, { __v: 0 });
-
-      let graph = {};
-
-      for (let node of nodesData) {
-        // Inside graph construction
-        graph[node._id] = new Node(node._id);
-        for (let otherNode of nodesData) {
-          if (node._id !== otherNode._id) {
-            graph[node._id].neighbors.push(otherNode._id);
-          }
-        }
-      }
-      console.log("Graph constructed with nodes:", Object.keys(graph).length);
-
       console.log(message);
       const fromId = message.data.data.fromNode;
       const toId = message.data.data.toNode;
 
-      console.log(graph);
       console.log(fromId + "," + toId);
 
-      const paths = await findAllPaths(graph, fromId, toId);
+      const paths = await findAllPaths(fromId, toId);
 
       const res = {
         id: message.id,

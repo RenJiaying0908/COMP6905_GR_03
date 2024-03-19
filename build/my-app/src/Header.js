@@ -11,8 +11,8 @@ function Header() {
     // Execute any logic here
     console.log("Link clicked!");
     const data = {
-      username: 'user',
-      password: '123'
+      type: 'get_nodes',
+      data: {}
     };
 
     postData(data, (error, data)=>{
