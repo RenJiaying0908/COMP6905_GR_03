@@ -38,7 +38,7 @@ class RoutingController {
       console.log(error.message);
     }
   }
-//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
+
   async getRoutes(message) {
     try {
       const results =  await RouteNode.find({}, { __v: 0 });
