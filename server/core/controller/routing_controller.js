@@ -38,19 +38,19 @@ class RoutingController {
       console.log(error.message);
     }
   }
-
+//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
   async getRoutes(message) {
     try {
-      const resort = new SkiResort(req.body);
-      const result = await resort.save();
-      //event.emit();
-      res.send({
-        resp_code: "000",
-        message: "success",
-        data: result,
-      });
-    } catch {
-      console.log("There was a problem creating the resort...");
+      const results =  await RouteNode.find({}, { __v: 0 });
+      const res = {
+        id:message.id,
+        data:{
+          results:results
+        }
+      }
+      event.emit(constants.EVENT_OUT, res);
+    } catch (error) {
+      console.log(error.message);
     }
   }
 

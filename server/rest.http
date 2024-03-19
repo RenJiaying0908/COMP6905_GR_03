@@ -95,12 +95,12 @@ Content-Type: application/json
 {
     "type":"add_nodes",
     "data":{
-        "name":"Example Node",
-        "icon_name":"example image",
+        "name":"Ski Node 1",
+        "icon_name":"example image 1",
         "status":true,
         "location":{
             "type": "Point",
-            "coordinates": [-0.00000343, 5.09209323]
+            "coordinates": [-0.0000545, 5.09209323]
         }
     }
 }
