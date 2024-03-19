@@ -5,7 +5,8 @@ const FIND_ROUTE = "find_routes";
 const GET_ROUTE = "get_routes";
 const FIND_NODES = "find_nodes";
 const ADD_FACILITY = "add_facility";
-const ADD_NODE = "add_nodes"
+const ADD_NODE = "add_nodes";
+const ADD_SLOPE = "add_slopes";
 
 module.exports = {
   EVENT_IN,
@@ -15,5 +16,6 @@ module.exports = {
   GET_ROUTE,
   FIND_NODES,
   ADD_FACILITY,
-  ADD_NODE
+  ADD_NODE,
+  ADD_SLOPE
 };
