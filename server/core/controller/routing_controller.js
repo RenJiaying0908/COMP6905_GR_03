@@ -39,6 +39,9 @@ class RoutingController {
     }
   }
 
+
+
+  
   async getRoutes(message) {
     try {
       const results =  await RouteNode.find({}, { __v: 0 });
