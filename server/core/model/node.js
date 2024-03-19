@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+
 const RouteNodeSchema = new Schema({
   name: {
     type: String,
