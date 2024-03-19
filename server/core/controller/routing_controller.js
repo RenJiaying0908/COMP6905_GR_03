@@ -63,22 +63,33 @@ class RoutingController {
 
   async getRoutes(message) {
     try {
-      const nodes =  await RouteNode.find({}, { __v: 0 });
-      const slopes = await Slope.find({}, {__v: 0 });
+      const [nodes, slopes] = await Promise.all([
+        RouteNode.find({}, { __v: 0 }),
+        Slope.find({}, { __v: 0 })
+      ]);
+  
       const res = {
-        id:message.id,
-        data:{
-          results:{
+        id: message.id,
+        data: {
+          results: {
             routes_nodes: nodes,
             routes_slopes: slopes
           }
         }
-      }
+      };
+  
       event.emit(constants.EVENT_OUT, res);
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
+      
+      // Consider emitting an error event or handling the error appropriately
+      event.emit(constants.EVENT_OUT, {
+        id: message.id,
+        error: error.message,
+      });
     }
   }
+  
 
   async findRoutes(message) {
     try {
