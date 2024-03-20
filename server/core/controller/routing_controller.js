@@ -37,11 +37,11 @@ function cacheRoutes(routes){
                 fromNode.neighbors[route.toNode.toString()] = new Set();
             }
             fromNode.neighbors[route.toNode.toString()].add(route._id.toString())
-            if(!toNode.neighbors[route.toNode.toString()])
+            if(!toNode.neighbors[route.fromNode.toString()])
             {
-                toNode.neighbors[route.toNode.toString()] = new Set();
+                toNode.neighbors[route.fromNode.toString()] = new Set();
             }
-            toNode.neighbors[route.toNode.toString()].add(route._id.toString());
+            toNode.neighbors[route.fromNode.toString()].add(route._id.toString());
         }
         console.log(routeMap);
     }

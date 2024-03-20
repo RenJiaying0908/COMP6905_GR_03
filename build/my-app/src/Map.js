@@ -114,6 +114,8 @@ const SkiResortMap = () => {
   const [locations, setLocations] = useState([]);
   const [connections, setConnections] = useState([]);
   const [nodeMap, setNodeMap] = useState({});
+  const [fromNodeOptions, setFromNodeOptions] = useState([]);
+  const [toNodeOptions, setToNodeOptions] = useState([]);
 
   const [connectionColors, setConnectionColors] = useState({});
 
@@ -136,10 +138,12 @@ const SkiResortMap = () => {
             {
                 nodeMap[node._id] = node;
             }
-            const connectionsData = data.results.routes_slopes;
+            const connectionsData = data.results.routes;
             setLocations(locationsDatas);
             setConnections(connectionsData);
             setNodeMap(nodeMap);
+            setFromNodeOptions(locationsDatas);
+            setToNodeOptions(locationsDatas);
             for(const slope of connectionsData)
             {
                 changeConnectionColor(slope.fromNode, slope.toNode, slope.color);
@@ -164,20 +168,30 @@ const SkiResortMap = () => {
   return (
     <div className="ski-resort-map-container">
       <div className="search-form">
-        <input
-          style={{ width: '80%' }}
-          type="text"
-          placeholder="Starting Location"
+        <select
+          style={{ width: '85%' }}
+          name="Starting Location"
           value={startingLocation}
           onChange={handleStartingLocationChange}
-        />
-        <input
-          style={{ width: '80%' }}
-          type="text"
-          placeholder="Destination"
+        >
+          {fromNodeOptions.map((option) => (
+            <option key={option._id} value={option.name}>
+              {option.name}
+            </option>
+      ))}
+        </select>
+        <select
+          style={{ width: '85%' }}
+          name="Destination"
           value={destination}
           onChange={handleDestinationChange}
-        />
+        >
+          {toNodeOptions.map((option) => (
+            <option key={option._id} value={option.name}>
+              {option.name}
+            </option>
+      ))}
+        </select>
         <select style={{ width: '85%' }} name="difficulty" value={preferences.difficulty} onChange={handlePreferencesChange}>
           <option value="Any">Difficulty: Any</option>
           <option value="Beginner">Beginner</option>
