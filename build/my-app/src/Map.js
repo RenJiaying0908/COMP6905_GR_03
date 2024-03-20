@@ -3,17 +3,25 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-
 import 'leaflet/dist/leaflet.css';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSkiing, faMountain, faStore, faHospital, faCoffee, faSchool } from '@fortawesome/free-solid-svg-icons'; 
+import { faSkiing, faMountain, faStore, faHospital, faCoffee, faSchool, faMapPin, faMapMarker, faLocationArrow } from '@fortawesome/free-solid-svg-icons'; 
 import L from 'leaflet';
 import { renderToString } from 'react-dom/server'; 
 import './SkiResortMap.css'; 
 import postData from './messenger';
 
-library.add(faSkiing, faMountain, faStore, faHospital, faCoffee, faSchool);
+library.add(faSkiing, faMountain, faStore, faHospital, faCoffee, faSchool, faMapPin, faMapMarker, faLocationArrow);
 
 const createLeafletIcon = (icon) => {
   return L.divIcon({
     html: renderToString(<FontAwesomeIcon icon={icon} />), 
+    className: 'leaflet-div-icon', 
+    iconSize: [24, 24], 
+  });
+};
+
+const createLeafletMarker = (icon, color) => {
+  return L.divIcon({
+    html: renderToString(<FontAwesomeIcon icon={icon} size="3x" style={{ backgroundColor: 'transparent', opacity: 0.8, fontSize: '32px', color: color }} />), 
     className: 'leaflet-div-icon', 
     iconSize: [24, 24], 
   });
@@ -65,6 +73,13 @@ const SkiResortMap = () => {
       }));
     };
 
+    const toggleMarkerVisibility = (id, visible) => {
+      setIsMarkerVisible(prevVisibles => ({
+        ...prevVisibles,
+        [id]: visible
+      }));
+    };
+
     const displayRoute = () => {
       connections.forEach(connection => {
         changeConnectionColor(connection._id, connection.color);
@@ -103,6 +118,7 @@ const SkiResortMap = () => {
   const [nodeMap, setNodeMap] = useState({});
   const [fromNodeOptions, setFromNodeOptions] = useState([]);
   const [toNodeOptions, setToNodeOptions] = useState([]);
+  const [isMarkerVisible, setIsMarkerVisible] = useState([]);
 
   const [connectionColors, setConnectionColors] = useState({});
   const [connectionStyles, setConnectionStyles] = useState({});
@@ -127,6 +143,8 @@ const SkiResortMap = () => {
           console.log(data);
           if(data.results)
           {
+            toggleMarkerVisibility("65f9b40bd3f604153d1d9b5f", true);
+            toggleMarkerVisibility("65f9b4e8d3f604153d1d9b67", true);
             if(mapRef.current)
             {
               var popupStart = L.popup({ closeButton: false, autoClose: false })
@@ -138,14 +156,16 @@ const SkiResortMap = () => {
               .setContent('End Point')
               .openOn(mapRef.current);
             }
-
-            for(const array of data.results){
+            for(var i = 0; i < data.results.length; i++){
+              const array = data.results[i];
+              var color = i==0?"yellow":"red";
               if(array)
               {
+
                 for(const id of array)
                 {
                   changeConnectionStyle(id, polyLineHighlitedStyle);
-                  changeConnectionColor(id, 'yellow');
+                  changeConnectionColor(id, color);
                   renderPolyLine(id);
                 }
               }
@@ -173,6 +193,7 @@ const SkiResortMap = () => {
             for(const node of locationsDatas)
             {
                 nodeMap[node._id] = node;
+                toggleMarkerVisibility(node._id, false);
             }
             const connectionsData = data.results.routes;
             setLocations(locationsDatas);
@@ -258,7 +279,7 @@ const SkiResortMap = () => {
       minZoom={mapOptions.minZoom} 
       style={{ height: '500px', width: '100%' }} 
       maxBounds={mapOptions.bounds}
-      whenCreated={mapInstance => { mapRef.current = mapInstance; }}
+      whenCreated={instance => { mapRef.current = instance; }}
     >
       {showSkiMap ? (
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
@@ -271,6 +292,10 @@ const SkiResortMap = () => {
               <strong>{location.name}</strong><br/>
             </Popup>
           </Marker>
+        ))}
+        {locations.map((location) => (
+          isMarkerVisible[location._id]&&
+          <Marker position={location.location.coordinates} icon={createLeafletMarker(faLocationArrow)}/> 
         ))}
           {connections.map((connection, index) => (
             
