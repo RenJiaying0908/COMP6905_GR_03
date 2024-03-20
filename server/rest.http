@@ -117,24 +117,11 @@ Content-Type: application/json
     "type":"add_routes",
     "data":{  
         "route_type":"slope",
-        "fromNode": "65f9b40bd3f604153d1d9b5f",
-        "toNode": "65f9b42ad3f604153d1d9b61",
+        "fromNode": "65f9b4e8d3f604153d1d9b67",
+        "toNode": "65f9b5e4d3f604153d1d9b6f",
         "color": "green"
     }
 }
-
- //slopes
-//  const connections = [
-//   { from: 1, to: 2, color: 'green' },
-//   { from: 1, to: 3, color: 'green'},
-//   { from: 2, to: 4, color: 'green' },
-//   { from: 1, to: 5, color: 'green' },
-//   { from: 3, to: 6, color: 'green' },
-//   { from: 2, to: 7, color: 'green' },
-//   { from: 3, to: 8, color: 'green' },
-//   { from: 5, to: 9, color: 'green' },
-// ];
-//slope or lift
 
 
 ###  test run
@@ -148,4 +135,14 @@ Content-Type: application/json
         "toNode": "65f9b5b5d3f604153d1d9b6d"
     }
 }
+
+
+###  test run
+POST http://localhost:3001/submit-data
+Content-Type: application/json
+
+{
+    "type":"search_route"
+}
+
 

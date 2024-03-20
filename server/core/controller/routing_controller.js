@@ -98,6 +98,8 @@ class RoutingController {
         this.getNodeIds(mes);
       }else if(mes.data.type == constants.ADD_ROUTE){
         this.addRoute(mes);
+      } else if(mes.data.type == constants.GET_SEARCHABLE_ROUTE){
+        this.searchRoute(mes);
       }
     });
   }
@@ -212,6 +214,26 @@ class RoutingController {
         id: message.id,
         data: {
           results: paths,
+        },
+      };
+      event.emit(constants.EVENT_OUT, res);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  async searchRoute(message) {
+    try {
+
+      const routes = [
+        ['65f9b40bd3f604153d1d9b5f', '65f9b4e8d3f604153d1d9b67'],
+        ['65f9b40bd3f604153d1d9b5f', '65f9b451d3f604153d1d9b63', '65f9b470d3f604153d1d9b65', '65f9b5e4d3f604153d1d9b6f', '65f9b4e8d3f604153d1d9b67'],
+      ];
+
+      const res = {
+        id: message.id,
+        data: {
+          results: routes,
         },
       };
       event.emit(constants.EVENT_OUT, res);

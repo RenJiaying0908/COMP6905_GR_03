@@ -9,6 +9,7 @@ const ADD_NODE = "add_nodes";
 const ADD_SLOPE = "add_slopes";
 const GET_NODES = "get_nodes";
 const ADD_ROUTE = "add_routes";
+const GET_SEARCHABLE_ROUTE = "search_route";
 
 module.exports = {
   EVENT_IN,
@@ -21,5 +22,6 @@ module.exports = {
   ADD_NODE,
   ADD_SLOPE,
   GET_NODES,
-  ADD_ROUTE
+  ADD_ROUTE,
+  GET_SEARCHABLE_ROUTE
 };
