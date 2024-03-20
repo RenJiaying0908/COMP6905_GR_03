@@ -2,7 +2,7 @@ const event = require("../../event");
 const constants = require("../../messaging/raw");
 const SkiResort = require("../model/ski_resort");
 const RouteNode = require("../model/node");
-const Slope = require("../model/slope");
+const Route = require("../model/route");
 
 class Node {
   constructor(id, neighbors = {}) {
@@ -96,6 +96,8 @@ class RoutingController {
         this.addSlope(mes);
       } else if (mes.data.type == constants.GET_NODES) {
         this.getNodeIds(mes);
+      }else if(mes.data.type == constants.ADD_ROUTE){
+        this.addRoute(mes);
       }
     });
   }
@@ -133,11 +135,29 @@ class RoutingController {
     }
   }
 
+
+  async addRoute(message) {
+    try {
+      console.log(message.data);
+      const route = new Route(message.data.data);
+      const result = await route.save();
+      const res = {
+        id: message.id,
+        data: {
+          results: result,
+        },
+      };
+      event.emit(constants.EVENT_OUT, res);
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
   async getRoutes(message) {
     try {
-      const [nodes, slopes] = await Promise.all([
+      const [nodes, routes] = await Promise.all([
         RouteNode.find({}, { __v: 0 }),
-        Slope.find({}, { __v: 0 }),
+        Route.find({}, { __v: 0 }),
       ]);
 
       const res = {
@@ -145,12 +165,12 @@ class RoutingController {
         data: {
           results: {
             routes_nodes: nodes,
-            routes_slopes: slopes,
+            routes: routes,
           },
         },
       };
       cacheNodes(nodes);
-      cacheRoutes(slopes);
+      cacheRoutes(routes);
       event.emit(constants.EVENT_OUT, res);
     } catch (error) {
       console.error(error.message);

@@ -26,6 +26,10 @@ const RouteNodeSchema = new Schema({
     type: String,
     required: true,
   },
+  node_type: {
+    type: String,
+    required: true
+  }
 });
 
 RouteNodeSchema.index({ location: "2dsphere" });

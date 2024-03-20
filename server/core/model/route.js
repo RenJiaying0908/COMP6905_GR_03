@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const SlopeSchema = new Schema({
+const RouteSchema = new Schema({
   fromNode: {
     type: Schema.Types.ObjectId, 
     ref: 'route_node',
@@ -16,7 +16,11 @@ const SlopeSchema = new Schema({
     type: String,
     required: true,
   },
+  route_type: {
+    type: String,
+    required: true
+  }
 });
 
-const Slope = mongoose.model("slope", SlopeSchema);
-module.exports = Slope;
+const Route = mongoose.model("route", RouteSchema);
+module.exports = Route;
