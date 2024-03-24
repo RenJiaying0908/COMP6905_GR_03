@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap, ImageOverlay } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -94,12 +94,16 @@ const SkiResortMap = () => {
       }));
     };
 
+//    [
+//      51.37,
+//      -116.23
+//  ]
   const [mapOptions] = useState({
     center: [51.35, -116.25], // Initial center
     zoom: 12, // Initial zoom level
     minZoom: 12, // Minimum allowed zoom level
     // maxZoom: 6, // Maximum allowed zoom level
-    bounds: [[51.3, -116.3], [51.4, -116.2]], // Bounds of the visible area
+    bounds: [[51.25, -116.05], [51.45, -116.45]], // Bounds of the visible area
   });
 
   var polyLineStyle = {
@@ -150,11 +154,11 @@ const SkiResortMap = () => {
               var popupStart = L.popup({ closeButton: false, autoClose: false })
               .setLatLng([51.37, -116.23])
               .setContent('Start Point')
-              .openOn(mapRef.current);
+              .openOn(mapRef);
               var popupEnd = L.popup({ closeButton: false, autoClose: false })
               .setLatLng([51.35, -116.27])
               .setContent('End Point')
-              .openOn(mapRef.current);
+              .openOn(mapRef);
             }
             for(var i = 0; i < data.results.length; i++){
               const array = data.results[i];
@@ -279,12 +283,17 @@ const SkiResortMap = () => {
       minZoom={mapOptions.minZoom} 
       style={{ height: '500px', width: '100%' }} 
       maxBounds={mapOptions.bounds}
-      whenCreated={instance => { mapRef.current = instance; }}
+      whenReady={
+        instance => { 
+          console.log("map created!")
+          mapRef.current = instance; 
+        }
+      }
     >
       {showSkiMap ? (
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <ImageOverlay url="/bg2.jpg" bounds={mapOptions.bounds}/>
         ) : (
-          <TileLayer url="https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png" />
+          <ImageOverlay url="/bg2.jpg" bounds={mapOptions.bounds}/>
         )}
         {locations.map((location) => (
           <Marker key={location.id} position={location.location.coordinates} icon={createLeafletIcon(faSkiing)} color='black'> 
