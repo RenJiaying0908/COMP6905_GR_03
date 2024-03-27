@@ -1,14 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  Popup,
-  Polyline,
-  ImageOverlay,
-  useMapEvent,
-} from "react-leaflet";
-import { useMap, useMapEvents } from "react-leaflet/hooks";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -68,7 +59,9 @@ const createLeafletMarker = (icon, color) => {
 };
 
 const SkiResortMap = () => {
+  const [polylineOriginalColors, setPolylineOriginalColors] = useState({});
   const mapRef = useRef(null);
+  const polylineOriginalColorsRef = new Map(); // Use a ref to store original colors
   const [startingLocation, setStartingLocation] = useState("");
   const [destination, setDestination] = useState("");
   const [preferences, setPreferences] = useState({
@@ -92,7 +85,7 @@ const SkiResortMap = () => {
 
   var routes = [];
   var nodes = [];
-
+  var currentHighlightedPolyLine = null;
   const createMap = () => {
     console.log("new create map");
     mapRef.current = L.map(mapRef.current, {
@@ -108,15 +101,43 @@ const SkiResortMap = () => {
   };
 
   const createPolyLines = () => {
+    var id_base = Date.now();
     for (const route of routes) {
       const coordinates = [
         nodeMap[route.fromNode].location.coordinates,
         nodeMap[route.toNode].location.coordinates,
       ];
-      const polyLine = L.polyline(coordinates, {
-        color: "green",
+
+      // Define default polyline style
+      let polyLineStyle = {
+        color: 'green', // Default color
+        weight: 7, // Default weight
         interactive: true,
-      });
+      };
+
+      // Modify style based on the route type and color
+      if (route.route_type === 'lift') {
+        // Keep the default style for lift
+      } else if (route.route_type === 'slope') {
+        // Check color and adjust style accordingly for slope
+        const colors = {
+          'green': { color: 'black', weight: 3 },
+          'blue': { color: 'blue', weight: 3 },
+          'red': { color: 'red', weight: 3 },
+        };
+
+        // Apply the specific style from the colors object if it exists
+        if (colors[route.color]) {
+          polyLineStyle = {...polyLineStyle, ...colors[route.color]};
+        }
+      }
+
+      // Create a Polyline with the determined style
+      const polyLine = L.polyline(coordinates, polyLineStyle);
+      polyLine._mid = id_base++;
+      polylineOriginalColorsRef.set(polyLine._mid, polyLineStyle.color);
+      console.log("polylineOriginalColorsRef size is: ", polylineOriginalColorsRef.size);
+
       polyLine.on({
         mouseover: () => {
           const center = polyLine.getCenter();
@@ -124,10 +145,15 @@ const SkiResortMap = () => {
             .setLatLng(center)
             .setContent("popup")
             .openOn(mapRef.current);
+          if (currentHighlightedPolyLine && currentHighlightedPolyLine !== polyLine) {
+            console.log("polyline id is : ",polyLine._mid );
+            console.log("color is : ", polylineOriginalColorsRef.get(polyLine._mid));
+            currentHighlightedPolyLine.setStyle({
+              color: polylineOriginalColorsRef.get(currentHighlightedPolyLine._mid)
+            });
+          }
           polyLine.setStyle({ color: "yellow" });
-        },
-        mouseout: () => {
-          polyLine.setStyle({ color: "green" });
+          currentHighlightedPolyLine = polyLine;
         },
       });
       polyLine.addTo(mapRef.current);
@@ -246,17 +272,6 @@ const SkiResortMap = () => {
         if (data.results) {
           toggleMarkerVisibility("65f9b40bd3f604153d1d9b5f", true);
           toggleMarkerVisibility("65f9b4e8d3f604153d1d9b67", true);
-          // if(mapRef.current)
-          // {
-          //   var popupStart = L.popup({ closeButton: false, autoClose: false })
-          //   .setLatLng([51.37, -116.23])
-          //   .setContent('Start Point')
-          //   .openOn(mapRef);
-          //   var popupEnd = L.popup({ closeButton: false, autoClose: false })
-          //   .setLatLng([51.35, -116.27])
-          //   .setContent('End Point')
-          //   .openOn(mapRef);
-          // }
           for (var i = 0; i < data.results.length; i++) {
             const array = data.results[i];
             var color = i == 0 ? "yellow" : "red";
@@ -314,13 +329,6 @@ const SkiResortMap = () => {
             createPolyLines();
           }
         });
-        // const locationsResponse = await fetch('https://example.com/locations');
-        // const locationsData = await locationsResponse.json();
-        // setLocations(locationsData);
-
-        // const connectionsResponse = await fetch('https://example.com/connections');
-        // const connectionsData = await connectionsResponse.json();
-        // setConnections(connectionsData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -329,7 +337,9 @@ const SkiResortMap = () => {
     fetchData();
 
     return () => {
-      mapRef.current.remove();
+      if (mapRef.current) {
+        mapRef.current.remove();
+      }
     };
   }, []);
 
@@ -396,61 +406,5 @@ const SkiResortMap = () => {
     </div>
   );
 };
-
-{
-  /* <MapContainer
-        center={mapOptions.center}
-        zoom={mapOptions.zoom}
-        minZoom={mapOptions.minZoom}
-        style={{ height: "500px", width: "100%" }}
-        maxBounds={mapOptions.bounds}
-        whenReady={(instance) => {
-          console.log("map created!");
-          mapRef.current = instance;
-        }}
-      >
-        {showSkiMap ? (
-          <ImageOverlay url="/bg3.png" bounds={mapOptions.bounds} />
-        ) : (
-          <ImageOverlay url="/bg3.png" bounds={mapOptions.bounds} />
-        )}
-        {locations.map((location) => (
-          <Marker
-            key={location.id}
-            position={location.location.coordinates}
-            icon={createLeafletIcon(faSkiing)}
-            color="black"
-          >
-            <Popup>
-              <strong>{location.name}</strong>
-              <br />
-            </Popup>
-          </Marker>
-        ))}
-        {locations.map(
-          (location) =>
-            isMarkerVisible[location._id] && (
-              <Marker
-                position={location.location.coordinates}
-                icon={createLeafletMarker(faLocationArrow)}
-              />
-            )
-        )}
-        {connections.map((connection, index) => (
-          <Polyline
-            interactive={true}
-            key={polyLineKey[connection._id]}
-            positions={[
-              nodeMap[connection.fromNode].location.coordinates,
-              nodeMap[connection.toNode].location.coordinates,
-            ]}
-            color={connectionColors[connection._id]}
-            style={connectionStyles[connection._id]}
-            mouseover={() => handleMouseOver(connection._id)}
-            mouseout={() => handleMouseOut(connection._id)}
-          />
-        ))}
-      </MapContainer> */
-}
 
 export default SkiResortMap;
