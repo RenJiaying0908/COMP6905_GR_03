@@ -39,18 +39,6 @@ const createLeafletIcon = (icon) => {
   });
 };
 
-const createLiftletIcon = (icon,backgroundColor = 'transparent', iconColor = 'white', iconSize = '30px') => {
-  return L.divIcon({
-    html: renderToString(
-      <div style={{ backgroundColor: backgroundColor, display: 'inline-block', borderRadius: '50%' }}>
-        <FontAwesomeIcon icon={icon} style={{ color: iconColor,fontSize: iconSize  }}/>
-      </div>
-    ),
-    className: "liftlet-div-icon",
-    iconSize: [24,24],
-  });
-};
-
 const createLeafletMarker = (icon, color) => {
   return L.divIcon({
     html: renderToString(
@@ -71,13 +59,9 @@ const createLeafletMarker = (icon, color) => {
 };
 
 const SkiResortMap = () => {
-  const slopeCounterMap = new Map();
-  let globalMarker = null;
-  let currentHighlightedMarker = null;
   const [polylineOriginalColors, setPolylineOriginalColors] = useState({});
   const mapRef = useRef(null);
   const polylineOriginalColorsRef = new Map(); // Use a ref to store original colors
-  const liftMarderOpacityRef = new Map();
   const [startingLocation, setStartingLocation] = useState("");
   const [destination, setDestination] = useState("");
   const [preferences, setPreferences] = useState({
@@ -110,14 +94,6 @@ const SkiResortMap = () => {
       zoom: 13,
     }).setView([51.35, -116.25], 12);
 
-    globalMarker = L.marker([0, 0], {
-      icon: L.divIcon({
-        className: 'custom-icon',
-        html: '',
-        iconSize: L.point(30, 30),
-      })
-    });
-
     const imageBounds = [
       [51.25, -116.05],
       [51.45, -116.45],
@@ -144,8 +120,6 @@ const SkiResortMap = () => {
       if (route.route_type === 'lift') {
         // Keep the default style for lift
       } else if (route.route_type === 'slope') {
-        slopeCounterMap.set(route._id, slopeCounter);
-        slopeCounter++;
         // Check color and adjust style accordingly for slope
         const colors = {
           'green': { color: 'black', weight: 3 },
@@ -163,7 +137,8 @@ const SkiResortMap = () => {
       const polyLine = L.polyline(coordinates, polyLineStyle);
       polyLine._mid = id_base++;
       polylineOriginalColorsRef.set(polyLine._mid, polyLineStyle.color);
-  
+      console.log("polylineOriginalColorsRef size is: ", polylineOriginalColorsRef.size);
+
       polyLine.on({
         mouseover: () => {
           const center = polyLine.getCenter();
@@ -171,57 +146,31 @@ const SkiResortMap = () => {
             .setLatLng(center)
             .setContent("popup")
             .openOn(mapRef.current);
-          
           if (currentHighlightedPolyLine && currentHighlightedPolyLine !== polyLine) {
-            const originalColor = polylineOriginalColorsRef.get(currentHighlightedPolyLine._mid);
-            currentHighlightedPolyLine.setStyle({ color: originalColor });
+            console.log("polyline id is : ",polyLine._mid );
+            console.log("color is : ", polylineOriginalColorsRef.get(polyLine._mid));
+            currentHighlightedPolyLine.setStyle({
+              color: polylineOriginalColorsRef.get(currentHighlightedPolyLine._mid)
+            });
           }
-      
-          polyLine.setStyle({ color: "orange" });
+          polyLine.setStyle({ color: "yellow" });
           currentHighlightedPolyLine = polyLine;
-
-
-          if (globalMarker || route.route_type === 'slope'){
-            const currentSlopeCounter = slopeCounterMap.get(route._id);
-            globalMarker.setLatLng(center);
-            if (!mapRef.current.hasLayer(globalMarker)&&route.route_type === 'slope') {
-            const markerHtml = `<div style="background-color: orange; border-radius: 50%; width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; color:white; font-weight:bold">${currentSlopeCounter}</div>`;
-              globalMarker.setIcon(L.divIcon({
-                className: 'custom-icon',
-                html: markerHtml,
-                iconSize: L.point(30, 30)
-              }));
-              globalMarker.addTo(mapRef.current);
-            }
-            if(route.route_type === 'lift'){
-              const liftIcon = createLiftletIcon(faSkiing, 'orange');
-              currentHighlightedMarker = L.marker(center, { icon: liftIcon });
-              currentHighlightedMarker.addTo(mapRef.current);
-            }
-          }
-          
         },
       });
-      
       polyLine.addTo(mapRef.current);
 
+      // 根据指示修改标记代码
       if (route.route_type === 'slope') {
-        const currentSlopeCounter = slopeCounterMap.get(route._id);
-        const markerHtml = `<div style="background-color: ${polyLineStyle.color}; border-radius: 50%; width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center;color:white;font-weight:bold">${currentSlopeCounter}</div>`;
         const marker = L.marker(polyLine.getCenter(), {
           icon: L.divIcon({
             className: 'custom-icon',
-            html: markerHtml,
-            iconSize: L.point(30, 30)
+            html: `<div style="background-color: rgba(255, 255, 255, 0.8); border-radius: 50%; width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center;">${slopeCounter}</div>`,
+            iconSize: [30, 30]
           })
         });
         marker.addTo(mapRef.current);
-      }else{
-        const liftIcon = createLiftletIcon(faSkiing,polyLineStyle.color); 
-        const markerLift = L.marker(polyLine.getCenter(), { icon: liftIcon });
-        markerLift.addTo(mapRef.current);
+        slopeCounter++; // 斜坡计数器递增
       }
-
     }
   };
 
@@ -339,7 +288,7 @@ const SkiResortMap = () => {
           toggleMarkerVisibility("65f9b4e8d3f604153d1d9b67", true);
           for (var i = 0; i < data.results.length; i++) {
             const array = data.results[i];
-            var color = i == 0 ? "orange" : "red";
+            var color = i == 0 ? "yellow" : "red";
             if (array) {
               for (const id of array) {
                 changeConnectionStyle(id, polyLineHighlitedStyle);
