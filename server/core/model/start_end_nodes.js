@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const StartEndNodeSchema = new Schema({
-  id: { type: String },
+  sid: { type: String },
   x: { type: String }, 
   y: { type: String },
 });

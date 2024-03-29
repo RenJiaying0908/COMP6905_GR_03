@@ -160,24 +160,24 @@ class RoutingController {
     StartEndNode.find({}, { __v: 0 }),
   ]);
 
-  // Helper function to convert start and end points into location objects
-  const getLocation = (nodeId) => {
-    const node = startAndEndpoints.find(n => n.id === nodeId);
-    return node ? { type: "Point", coordinates: [node.x, node.y] } : null;
-  };
 
   // Process lifts and slopes into routes and nodes
-  const routesNodes = [...lifts, ...slopes].map(item => ({
-    location: getLocation(item.fromNode), // Assuming fromNode for the location
-    _id: item.id, // Converting numeric ID to string
+  const routesNodes = [...startAndEndpoints].map(item => ({
+    
+    location: {type: "Point", coordinates: [item.x, item.y]},
+    _id: item.sid, // Converting numeric ID to stringx
     name: item.name,
     icon_name: "faMountain", // Example, adjust as necessary
     status: "true", // Placeholder, adjust as necessary
     version: 0.1, // Placeholder, adjust as necessary
-  }));
+  }
+  )
+  );
 
+  console.log("Run......");
   const routes = [...lifts, ...slopes].map(item => ({
     _id: item.id,
+    id: item.id,
     fromNode: item.fromNode,
     toNode: item.toNode,
     color: item.color,

@@ -79,7 +79,6 @@ Content-Type: application/json
     "type":"get_routes"
 }
 
-
 ###  test run
 POST http://localhost:3001/submit-data
 Content-Type: application/json
@@ -135,7 +134,6 @@ Content-Type: application/json
         "toNode": "65f9b5b5d3f604153d1d9b6d"
     }
 }
-
 
 ###  test run
 POST http://localhost:3001/submit-data
