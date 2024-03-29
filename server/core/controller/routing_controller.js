@@ -169,7 +169,7 @@ class RoutingController {
   // Process lifts and slopes into routes and nodes
   const routesNodes = [...lifts, ...slopes].map(item => ({
     location: getLocation(item.fromNode), // Assuming fromNode for the location
-    _id: item._id, // Converting numeric ID to string
+    _id: item.id, // Converting numeric ID to string
     name: item.name,
     icon_name: "faMountain", // Example, adjust as necessary
     status: "true", // Placeholder, adjust as necessary
@@ -177,7 +177,7 @@ class RoutingController {
   }));
 
   const routes = [...lifts, ...slopes].map(item => ({
-    _id: item._id,
+    _id: item.id,
     fromNode: item.fromNode,
     toNode: item.toNode,
     color: item.color,
