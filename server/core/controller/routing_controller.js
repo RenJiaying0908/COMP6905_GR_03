@@ -155,9 +155,9 @@ class RoutingController {
 
     // Fetch all data from the database
   const [lifts, slopes, startAndEndpoints] = await Promise.all([
-    Lift.find().lean(),
-    Slope.find().lean(),
-    StartEndNode.find().lean(),
+    Lift.find({}, { __v: 0 }),
+    Slope.find({}, { __v: 0 }),
+    StartEndNode.find({}, { __v: 0 }),
   ]);
 
   // Helper function to convert start and end points into location objects
@@ -169,7 +169,7 @@ class RoutingController {
   // Process lifts and slopes into routes and nodes
   const routesNodes = [...lifts, ...slopes].map(item => ({
     location: getLocation(item.fromNode), // Assuming fromNode for the location
-    id: item.id, // Converting numeric ID to string
+    _id: item._id, // Converting numeric ID to string
     name: item.name,
     icon_name: "faMountain", // Example, adjust as necessary
     status: "true", // Placeholder, adjust as necessary
@@ -177,7 +177,7 @@ class RoutingController {
   }));
 
   const routes = [...lifts, ...slopes].map(item => ({
-    id: item.id,
+    _id: item._id,
     fromNode: item.fromNode,
     toNode: item.toNode,
     color: item.color,
