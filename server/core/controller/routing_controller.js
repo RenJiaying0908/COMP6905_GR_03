@@ -19,7 +19,8 @@ const routeMap = new Map();
 function cacheNodes(nodes) {
   if (nodes) {
     for (const node of nodes) {
-      routeMap[node._id] = new Node(node.id, new Map());
+      nodesMap[node.sid] = node;
+      //routeMap[node.sid] = new Node(node.sid, new Map());
     }
   }
 }
@@ -168,7 +169,6 @@ class RoutingController {
       status: "true",
     }));
 
-    console.log("Run......");
     const routes = [...lifts, ...slopes].map((item) => ({
       _id: item.id,
       id: item.id,
@@ -177,7 +177,7 @@ class RoutingController {
       color: item.color,
       route_type: lifts.includes(item) ? "lift" : "slope", // Distinguish between lifts and slopes
       name: item.name,
-      ...(item.length !== undefined && { distance: item.length }),
+      distance: item.length !== undefined ? item.length : -1, 
     }));
 
     // Assemble and return the final structure
@@ -190,8 +190,7 @@ class RoutingController {
         },
       },
     };
-    // cacheNodes(routesNodes);
-    // cacheRoutes(routes);
+
     event.emit(constants.EVENT_OUT, res);
   }
 
