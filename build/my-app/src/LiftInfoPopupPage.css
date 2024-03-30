@@ -1,0 +1,83 @@
+.lift-info-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: auto;
+    background-color: #fff; 
+    padding: 20px;
+    box-shadow: none; 
+    z-index: 1000;
+    border-radius: 10px; 
+    border: 1px solid #ccc; 
+    overflow: hidden; 
+    box-sizing: border-box; 
+  }
+  
+  .lift-info-popup-header {
+    font-size: 24px; 
+    color: #333; 
+    margin-bottom: 20px; 
+    text-align: center; 
+  }
+  
+  
+  .lifts-table th {
+    background-color: #eee;
+    color: #333; 
+    text-align: center;
+  }
+
+  .lifts-table td {
+    text-align: center;
+  }
+  
+  .close-icon {
+    position: absolute; 
+    top: 16px; 
+    right: 16px; 
+    cursor: pointer; 
+    color: red;; 
+    font-size: 24px;
+  }
+
+  .lift-info-popup-close-button-container button {
+    background-color: #007bff; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 5px; 
+    margin-top: 20px; 
+    cursor: pointer; 
+    font-size: 16px; 
+    margin: 20px 0; 
+  }
+
+  .lift-info-popup-close-button-container {
+    margin-top: auto; /* 将按钮推到底部 */
+    width: 100%; /* 按钮宽度与容器相同 */
+    display: flex;
+    justify-content: center; /* 水平居中按钮 */
+  }
+
+  
+  .lifts-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    margin: 0 auto;
+  }
+  
+  .icon {
+    margin-right: 5px;
+  }
+  
+  .icon.open {
+    color: green;
+  }
+  
+  .icon.closed {
+    color: red;
+  }
+  

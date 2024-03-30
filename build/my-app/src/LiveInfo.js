@@ -1,13 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './LiveInfo.css';
 
-function InfoCard({ title, description, imageUrl }) {
+function InfoCard({ title, description, imageUrl, onClick }) {
   return (
-    <div className="info-card">
+    <div className="info-card" onClick={() => onClick({ title, description, imageUrl })}>
       <div className="info-image" style={{ backgroundImage: `url(${imageUrl})` }}></div>
       <div className="info-content">
         <h3>{title}</h3>
-        <p>{description}</p >
+        <p>{description}</p>
       </div>
     </div>
   );
@@ -31,8 +31,8 @@ function LiveInfo() {
       imageUrl: "/SlopesPicture.jpg"
     },
     {
-      title: "food place & public restrooms",
-      description: "Looking for food place and public restrooms? Click here！",
+      title: "Food Places & Public Restrooms",
+      description: "Looking for food places and public restrooms? Click here！",
       imageUrl: "/FoodPlacePicture.jpg"
     },
   ];
@@ -41,9 +41,9 @@ function LiveInfo() {
     <section className="live-info-section">
       <h2>Live Infos from Snow Space Salzburg</h2>
       <div className="cards-container">
-        {cards.map(card => (
+        {cards.map((card, index) => (
           <InfoCard
-            key={card.title}
+            key={index}
             title={card.title}
             description={card.description}
             imageUrl={card.imageUrl}

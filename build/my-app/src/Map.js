@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { faCheckCircle, faTimesCircle ,faTimes} from "@fortawesome/free-solid-svg-icons";
 import {
   MapContainer,
   TileLayer,
@@ -24,6 +25,7 @@ import {
 import L, { map } from "leaflet";
 import { renderToString } from "react-dom/server";
 import "./SkiResortMap.css";
+import './LiftInfoPopupPage.css';
 import postData from "./messenger";
 library.add(
   faSkiing,
@@ -78,24 +80,41 @@ const LiftInfoPopupPage = ({ onClose }) => {
   document.body.style.overflow = "hidden";
   return (
     <div className="lift-info-popup">
-      <div className="lift-info-popup-bg">
         <div className="lift-info-popup-content-bg">
-          {lifts.map((lift) => (
-            <p>{lift.name}</p>
-          ))}
-        </div>
-        <div className="lift-info-popup-close-button-container">
-          <button
-            onClick={() => {
+        <div className="lift-info-popup-header">
+          <h2>Cable Cars & Lifts</h2>
+          <FontAwesomeIcon icon={faTimes} className="close-icon" onClick={() => {
               document.body.style.overflow = originalStyle;
               onClose();
-            }}
-          >
-            Close
-          </button>
+            }}/>
+        </div>
+          <table className="lifts-table">
+            <thead>
+              <tr>
+                <th>NAME</th>
+                <th>TYPE</th>
+                <th>STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {lifts.map((lift, index) => (
+                <tr key={index}>
+                  <td>{lift.name}</td>
+                  <td>{lift.type}</td>
+                  <td>
+                    {lift.status === 'open' ? (
+                      <FontAwesomeIcon icon={faCheckCircle} className="icon open" />
+                    ) : (
+                      <FontAwesomeIcon icon={faTimesCircle} className="icon closed" />
+                    )}
+                    {lift.status}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-    </div>
   );
 };
 
