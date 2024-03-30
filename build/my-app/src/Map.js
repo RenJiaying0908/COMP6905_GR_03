@@ -71,6 +71,8 @@ const createLiftletIcon = (
   });
 };
 
+const lifts = [];
+
 const LiftInfoPopupPage = ({ onClose }) => {
   const originalStyle = window.getComputedStyle(document.body).overflow;
   document.body.style.overflow = "hidden";
@@ -78,21 +80,9 @@ const LiftInfoPopupPage = ({ onClose }) => {
     <div className="lift-info-popup">
       <div className="lift-info-popup-bg">
         <div className="lift-info-popup-content-bg">
-          <p>lift info one</p>
-          <p>lift info two</p>
-          <p>lift info three</p>
-          <p>lift info one</p>
-          <p>lift info two</p>
-          <p>lift info three</p>
-          <p>lift info one</p>
-          <p>lift info two</p>
-          <p>lift info three</p>
-          <p>lift info one</p>
-          <p>lift info two</p>
-          <p>lift info three</p>
-          <p>lift info one</p>
-          <p>lift info two</p>
-          <p>lift info three</p>
+          {lifts.map((lift) => (
+            <p>{lift.name}</p>
+          ))}
         </div>
         <div className="lift-info-popup-close-button-container">
           <button
@@ -160,6 +150,7 @@ const SkiResortMap = () => {
 
   var routes = [];
   var nodes = [];
+  const intermediateNodes = new Map();
   var currentHighlightedPolyLine = null;
   var slopeCounter = 1; // 初始化斜坡计数器
 
@@ -167,16 +158,23 @@ const SkiResortMap = () => {
     setLiftInfoPopup(!showLiftInfo);
   };
 
+  //    mapRef.current = L.map(mapRef.current, {
+  //    center: [51.505, -0.09],
+  //    zoom: 13,
+  //  }).setView([51.35, -116.25], 12);
   const createMap = () => {
     console.log("new create map");
     mapRef.current = L.map(mapRef.current, {
-      center: [51.505, -0.09],
+      center: [50, -100],
       zoom: 13,
-    }).setView([51.35, -116.25], 12);
+    }).setView([50, -100], 12);
 
+    //      [51.25, -116.05],
+    //      [51.45, -116.45],
+    //x:0.22(vertical), y:0.4(horizon)
     const imageBounds = [
-      [51.25, -116.05],
-      [51.45, -116.45],
+      [49.89, -99.8],
+      [50.11, -100.2],
     ];
     L.imageOverlay("/bg3.png", imageBounds).addTo(mapRef.current);
   };
@@ -188,8 +186,18 @@ const SkiResortMap = () => {
       var start_y = nodeMap[route.fromNode].location.coordinates[1];
       var end_x = nodeMap[route.toNode].location.coordinates[0];
       var end_y = nodeMap[route.toNode].location.coordinates[1];
+
+      var intermediateNode = [(start_x + end_x) / 2, (start_y + end_y) / 2];
+      if (intermediateNodes.get(intermediateNode[0]) == intermediateNode[1]) {
+        intermediateNode[0] += 0.005;
+        intermediateNode[1] += 0.005;
+      } else {
+        intermediateNodes.set(intermediateNode[0], intermediateNode[1]);
+      }
+
       const coordinates = [
         nodeMap[route.fromNode].location.coordinates,
+        intermediateNode,
         nodeMap[route.toNode].location.coordinates,
       ];
       // Define default polyline style
@@ -231,7 +239,7 @@ const SkiResortMap = () => {
           const center = polyLine.getCenter();
           L.popup()
             .setLatLng(center)
-            .setContent("popup")
+            .setContent(route.name)
             .openOn(mapRef.current);
           if (lastGlobalMarker) {
             mapRef.current.removeLayer(lastGlobalMarker);
@@ -377,16 +385,16 @@ const SkiResortMap = () => {
   //      51.37,
   //      -116.23
   //  ]
-  const [mapOptions] = useState({
-    center: [51.35, -116.25], // Initial center
-    zoom: 12, // Initial zoom level
-    minZoom: 12, // Minimum allowed zoom level
-    // maxZoom: 6, // Maximum allowed zoom level
-    bounds: [
-      [51.25, -116.05],
-      [51.45, -116.45],
-    ], // Bounds of the visible area
-  });
+  // const [mapOptions] = useState({
+  //   center: [51.35, -116.25], // Initial center
+  //   zoom: 12, // Initial zoom level
+  //   minZoom: 12, // Minimum allowed zoom level
+  //   // maxZoom: 6, // Maximum allowed zoom level
+  //   bounds: [
+  //     [51.25, -116.05],
+  //     [51.45, -116.45],
+  //   ], // Bounds of the visible area
+  // });
 
   var polyLineStyle = {
     weight: 4,
@@ -451,16 +459,36 @@ const SkiResortMap = () => {
             console.log(data);
             const locationsDatas = data.results.routes_nodes;
             for (const node of locationsDatas) {
+              //re-mapping the coordinates.
+              // x [0, 2400] (vertical), y [0, 1200]
+              //center 50, -100
+              //north west: [49.89, -99.8], south east: [50.11, -100.2],
+              //x:0.22(vertical), y:0.4(horizon)
+
+              var x = node.location.coordinates[0];
+              var y = node.location.coordinates[1];
+
+              x = (x / 1800) * 0.4 - 0.2 + -100;
+              y = (y / 1200) * 0.22 - 0.11 + 50;
+
+              node.location.coordinates[1] = x + 0.03;
+              node.location.coordinates[0] = y;
+
               nodeMap[node._id] = node;
               toggleMarkerVisibility(node._id, false);
             }
             const connectionsData = data.results.routes;
+            for (var route of connectionsData) {
+              if (route.route_type == "lift") {
+                lifts.push(route);
+              }
+            }
 
             setLocations(locationsDatas);
             setConnections(connectionsData);
             setNodeMap(nodeMap);
-            setFromNodeOptions(locationsDatas);
-            setToNodeOptions(locationsDatas);
+            setFromNodeOptions(connectionsData);
+            setToNodeOptions(connectionsData);
             for (const slope of connectionsData) {
               changeConnectionColor(slope._id, slope.color);
               changeConnectionStyle(slope._id, polyLineStyle);
@@ -555,7 +583,7 @@ const SkiResortMap = () => {
         <button onClick={handleSearch}>Search</button>
       </div>
       <hr className="horizontal-line"></hr>
-      <div ref={mapRef} style={{ height: "600px", width: "100%" }} />
+      <div ref={mapRef} style={{ height: "700px", width: "80%" }} />
     </div>
   );
 };
