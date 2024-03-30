@@ -5,7 +5,7 @@ const RouteNode = require("../model/node");
 const Route = require("../model/route");
 const Lift = require("../model/lift");
 const Slope = require("../model/slope");
-const StartEndNode = require("../model/start_end_nodes"); 
+const StartEndNode = require("../model/start_end_nodes");
 
 class Node {
   constructor(id, neighbors = {}) {
@@ -152,52 +152,47 @@ class RoutingController {
   }
 
   async getRoutes(message) {
-
     // Fetch all data from the database
-  const [lifts, slopes, startAndEndpoints] = await Promise.all([
-    Lift.find({}, { __v: 0 }),
-    Slope.find({}, { __v: 0 }),
-    StartEndNode.find({}, { __v: 0 }),
-  ]);
+    const [lifts, slopes, startAndEndpoints] = await Promise.all([
+      Lift.find({}, { __v: 0 }),
+      Slope.find({}, { __v: 0 }),
+      StartEndNode.find({}, { __v: 0 }),
+    ]);
 
+    // Process lifts and slopes into routes and nodes
+    const routesNodes = [...startAndEndpoints].map((item) => ({
+      location: { type: "Point", coordinates: [item.x, item.y] },
+      _id: item.sid,
+      name: item.name,
+      icon_name: "faMountain",
+      status: "true",
+    }));
 
-  // Process lifts and slopes into routes and nodes
-  const routesNodes = [...startAndEndpoints].map(item => ({
-    
-    location: {type: "Point", coordinates: [item.x, item.y]},
-    _id: item.sid, // Converting numeric ID to stringx
-    name: item.name,
-    icon_name: "faMountain", // Example, adjust as necessary
-    status: "true", // Placeholder, adjust as necessary
-    version: 0.1, // Placeholder, adjust as necessary
-  }
-  )
-  );
+    console.log("Run......");
+    const routes = [...lifts, ...slopes].map((item) => ({
+      _id: item.id,
+      id: item.id,
+      fromNode: item.fromNode,
+      toNode: item.toNode,
+      color: item.color,
+      route_type: lifts.includes(item) ? "lift" : "slope", // Distinguish between lifts and slopes
+      name: item.name,
+      ...(item.length !== undefined && { distance: item.length }),
+    }));
 
-  console.log("Run......");
-  const routes = [...lifts, ...slopes].map(item => ({
-    _id: item.id,
-    id: item.id,
-    fromNode: item.fromNode,
-    toNode: item.toNode,
-    color: item.color,
-    route_type: lifts.includes(item) ? "lift" : "slope", // Distinguish between lifts and slopes
-  }));
-
-  // Assemble and return the final structure
-  const res = {
-    id: message.id,
-    data: {
-      results: {
-        routes_nodes: routesNodes,
-        routes: routes,
+    // Assemble and return the final structure
+    const res = {
+      id: message.id,
+      data: {
+        results: {
+          routes_nodes: routesNodes,
+          routes: routes,
+        },
       },
-    },
-  };
-  // cacheNodes(routesNodes);
-  // cacheRoutes(routes);
-  event.emit(constants.EVENT_OUT, res);
-
+    };
+    // cacheNodes(routesNodes);
+    // cacheRoutes(routes);
+    event.emit(constants.EVENT_OUT, res);
   }
 
   async findRoutes(message) {
