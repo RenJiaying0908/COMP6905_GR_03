@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
-import { faCheckCircle, faTimesCircle ,faTimes} from "@fortawesome/free-solid-svg-icons";
+import {
+  faCheckCircle,
+  faTimesCircle,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   MapContainer,
   TileLayer,
@@ -25,7 +29,7 @@ import {
 import L, { map } from "leaflet";
 import { renderToString } from "react-dom/server";
 import "./SkiResortMap.css";
-import './LiftInfoPopupPage.css';
+import "./LiftInfoPopupPage.css";
 import postData from "./messenger";
 library.add(
   faSkiing,
@@ -80,41 +84,51 @@ const LiftInfoPopupPage = ({ onClose }) => {
   document.body.style.overflow = "hidden";
   return (
     <div className="lift-info-popup">
-        <div className="lift-info-popup-content-bg">
+      <div className="lift-info-popup-content-bg">
         <div className="lift-info-popup-header">
           <h2>Cable Cars & Lifts</h2>
-          <FontAwesomeIcon icon={faTimes} className="close-icon" onClick={() => {
+          <FontAwesomeIcon
+            icon={faTimes}
+            className="close-icon"
+            onClick={() => {
               document.body.style.overflow = originalStyle;
               onClose();
-            }}/>
+            }}
+          />
         </div>
-          <table className="lifts-table">
-            <thead>
-              <tr>
-                <th>NAME</th>
-                <th>TYPE</th>
-                <th>STATUS</th>
+        <table className="lifts-table">
+          <thead>
+            <tr>
+              <th>NAME</th>
+              <th>TYPE</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+          <tbody>
+            {lifts.map((lift, index) => (
+              <tr key={index}>
+                <td>{lift.name}</td>
+                <td>{lift.type}</td>
+                <td>
+                  {lift.status === "open" ? (
+                    <FontAwesomeIcon
+                      icon={faCheckCircle}
+                      className="icon open"
+                    />
+                  ) : (
+                    <FontAwesomeIcon
+                      icon={faTimesCircle}
+                      className="icon closed"
+                    />
+                  )}
+                  {lift.status}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {lifts.map((lift, index) => (
-                <tr key={index}>
-                  <td>{lift.name}</td>
-                  <td>{lift.type}</td>
-                  <td>
-                    {lift.status === 'open' ? (
-                      <FontAwesomeIcon icon={faCheckCircle} className="icon open" />
-                    ) : (
-                      <FontAwesomeIcon icon={faTimesCircle} className="icon closed" />
-                    )}
-                    {lift.status}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
+    </div>
   );
 };
 
@@ -144,7 +158,7 @@ const SkiResortMap = () => {
   const [showLiftInfo, setLiftInfoPopup] = useState(false);
   const [polylineOriginalColors, setPolylineOriginalColors] = useState({});
   const mapRef = useRef(null);
-  const polylineOriginalColorsRef = new Map(); // Use a ref to store original colors
+  const polylineOriginalColorsRef = useRef(new Map()); // Use a ref to store original colors
   const liftMarderOpacityRef = new Map();
   const [startingLocation, setStartingLocation] = useState("");
   const [destination, setDestination] = useState("");
@@ -153,12 +167,12 @@ const SkiResortMap = () => {
     duration: "Any",
   });
   const [showSkiMap, setShowSkiMap] = useState(true);
-  const [polylines, setPolylines] = useState({});
 
   const [locations, setLocations] = useState([]);
   const [connections, setConnections] = useState([]);
 
   const [nodeMap, setNodeMap] = useState({});
+  const [routeMap, setRouteMap] = useState({});
   const [fromNodeOptions, setFromNodeOptions] = useState([]);
   const [toNodeOptions, setToNodeOptions] = useState([]);
   const [isMarkerVisible, setIsMarkerVisible] = useState([]);
@@ -167,11 +181,58 @@ const SkiResortMap = () => {
   const [connectionStyles, setConnectionStyles] = useState({});
   const [polyLineKey, setPolyKey] = useState({});
 
+  var blinkInterval = useRef(null);
+
+  var blinkingPolyLines = [];
   var routes = [];
   var nodes = [];
+  const polyLineMap = useRef(new Map());
+  const markerMap = useRef(new Map());
   const intermediateNodes = new Map();
   var currentHighlightedPolyLine = null;
   var slopeCounter = 1; // 初始化斜坡计数器
+  const blinkColor = "gray";
+
+  const blink = () => {
+    if (blinkingPolyLines) {
+      for (const polyLine of blinkingPolyLines) {
+        var marker = markerMap.current.get(polyLine._id);
+        var currentOpacity = polyLine.options.opacity;
+        if (currentOpacity === 1) {
+          polyLine.setStyle({ opacity: 0 });
+          marker.remove();
+        } else {
+          polyLine.setStyle({
+            opacity: 1,
+          });
+          marker.addTo(mapRef.current);
+        }
+      }
+    }
+  };
+
+  function startBlinking(polyLines) {
+    stopBlinking();
+    blinkingPolyLines = polyLines;
+    blinkInterval.current = setInterval(blink, 350);
+  }
+
+  function stopBlinking() {
+    if (blinkInterval.current) {
+      clearInterval(blinkInterval.current);
+      blinkInterval.current = null;
+      if (blinkingPolyLines) {
+        for (const polyLine of blinkingPolyLines) {
+          var marker = markerMap.current.get(polyLine._id);
+          polyLine.setStyle({
+            opacity: 1,
+          });
+          marker.addTo(mapRef.current);
+        }
+        blinkingPolyLines = null;
+      }
+    }
+  }
 
   const toggleLiftInfoPopup = () => {
     setLiftInfoPopup(!showLiftInfo);
@@ -246,7 +307,8 @@ const SkiResortMap = () => {
       // Create a Polyline with the determined style
       const polyLine = L.polyline(coordinates, polyLineStyle);
       polyLine._mid = id_base++;
-      polylineOriginalColorsRef.set(polyLine._mid, polyLineStyle.color);
+      polyLine._id = String(route._id);
+      polylineOriginalColorsRef.current.set(polyLine._mid, polyLineStyle.color);
       if (route.route_type === "slope") {
         polyLine.routeNum = slopeCounter++;
       } else {
@@ -270,7 +332,7 @@ const SkiResortMap = () => {
             currentHighlightedPolyLine &&
             currentHighlightedPolyLine !== polyLine
           ) {
-            const originalColor = polylineOriginalColorsRef.get(
+            const originalColor = polylineOriginalColorsRef.current.get(
               currentHighlightedPolyLine._mid
             );
             currentHighlightedPolyLine.setStyle({ color: originalColor });
@@ -313,6 +375,7 @@ const SkiResortMap = () => {
       });
 
       polyLine.addTo(mapRef.current);
+      polyLineMap.current.set(String(route._id), polyLine);
 
       if (route.route_type === "slope") {
         const markerHtml = `<div style="background-color: ${polyLineStyle.color}; border-radius: 50%; width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center;color:white;font-weight:bold">${polyLine.routeNum}</div>`;
@@ -324,10 +387,12 @@ const SkiResortMap = () => {
           }),
         });
         marker.addTo(mapRef.current);
+        markerMap.current.set(String(route._id), marker);
       } else {
         const liftIcon = createLiftletIcon(faSkiing, polyLineStyle.color);
         const markerLift = L.marker(polyLine.getCenter(), { icon: liftIcon });
         markerLift.addTo(mapRef.current);
+        markerMap.current.set(String(route._id), markerLift);
       }
     }
   };
@@ -344,6 +409,12 @@ const SkiResortMap = () => {
   };
 
   const handleStartingLocationChange = (event) => {
+    var selectElement = document.getElementById("startLocationSelect");
+    var selectedOption = selectElement.options[selectElement.selectedIndex];
+    var key = selectedOption.getAttribute("id_key");
+    if (key) {
+      startBlinking([polyLineMap.current.get(key)]);
+    }
     setStartingLocation(event.target.value);
   };
 
@@ -498,6 +569,7 @@ const SkiResortMap = () => {
             }
             const connectionsData = data.results.routes;
             for (var route of connectionsData) {
+              routeMap[String(route._id)] = route;
               if (route.route_type == "lift") {
                 lifts.push(route);
               }
@@ -506,6 +578,7 @@ const SkiResortMap = () => {
             setLocations(locationsDatas);
             setConnections(connectionsData);
             setNodeMap(nodeMap);
+            setRouteMap(routeMap);
             setFromNodeOptions(connectionsData);
             setToNodeOptions(connectionsData);
             for (const slope of connectionsData) {
@@ -552,6 +625,7 @@ const SkiResortMap = () => {
       <hr className="horizontal-line"></hr>
       <div className="search-form">
         <select
+          id="startLocationSelect"
           style={{ width: "85%" }}
           name="Starting Location"
           value={startingLocation}
@@ -559,13 +633,14 @@ const SkiResortMap = () => {
         >
           <option value="Any">From: Any</option>
           {fromNodeOptions.map((option) => (
-            <option key={option._id} value={option.name}>
+            <option key={option._id} value={option.name} id_key={option._id}>
               {option.name}
             </option>
           ))}
         </select>
         <select
           style={{ width: "85%" }}
+          id="destinationSelect"
           name="Destination"
           value={destination}
           onChange={handleDestinationChange}
@@ -580,6 +655,7 @@ const SkiResortMap = () => {
         <select
           style={{ width: "85%" }}
           name="difficulty"
+          id="difficultySelect"
           value={preferences.difficulty}
           onChange={handlePreferencesChange}
         >
@@ -591,6 +667,7 @@ const SkiResortMap = () => {
         <select
           style={{ width: "85%" }}
           name="duration"
+          id="durationSelect"
           value={preferences.duration}
           onChange={handlePreferencesChange}
         >
