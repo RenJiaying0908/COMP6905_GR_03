@@ -183,7 +183,7 @@ const SkiResortMap = () => {
 
   var blinkInterval = useRef(null);
 
-  var blinkingPolyLines = [];
+  var blinkingPolyLines = useRef([]);
   var routes = [];
   var nodes = [];
   const polyLineMap = useRef(new Map());
@@ -194,8 +194,8 @@ const SkiResortMap = () => {
   const blinkColor = "gray";
 
   const blink = () => {
-    if (blinkingPolyLines) {
-      for (const polyLine of blinkingPolyLines) {
+    if (blinkingPolyLines.current) {
+      for (const polyLine of blinkingPolyLines.current) {
         var marker = markerMap.current.get(polyLine._id);
         var currentOpacity = polyLine.options.opacity;
         if (currentOpacity === 1) {
@@ -213,7 +213,7 @@ const SkiResortMap = () => {
 
   function startBlinking(polyLines) {
     stopBlinking();
-    blinkingPolyLines = polyLines;
+    blinkingPolyLines.current = polyLines;
     blinkInterval.current = setInterval(blink, 350);
   }
 
@@ -221,15 +221,15 @@ const SkiResortMap = () => {
     if (blinkInterval.current) {
       clearInterval(blinkInterval.current);
       blinkInterval.current = null;
-      if (blinkingPolyLines) {
-        for (const polyLine of blinkingPolyLines) {
+      if (blinkingPolyLines.current) {
+        for (const polyLine of blinkingPolyLines.current) {
           var marker = markerMap.current.get(polyLine._id);
           polyLine.setStyle({
             opacity: 1,
           });
           marker.addTo(mapRef.current);
         }
-        blinkingPolyLines = null;
+        blinkingPolyLines.current = null;
       }
     }
   }
@@ -414,11 +414,21 @@ const SkiResortMap = () => {
     var key = selectedOption.getAttribute("id_key");
     if (key) {
       startBlinking([polyLineMap.current.get(key)]);
+    } else {
+      stopBlinking();
     }
     setStartingLocation(event.target.value);
   };
 
   const handleDestinationChange = (event) => {
+    var selectElement = document.getElementById("destinationSelect");
+    var selectedOption = selectElement.options[selectElement.selectedIndex];
+    var key = selectedOption.getAttribute("id_key");
+    if (key) {
+      startBlinking([polyLineMap.current.get(key)]);
+    } else {
+      stopBlinking();
+    }
     setDestination(event.target.value);
   };
 
@@ -647,7 +657,7 @@ const SkiResortMap = () => {
         >
           <option value="Any">To: Any</option>
           {toNodeOptions.map((option) => (
-            <option key={option._id} value={option.name}>
+            <option key={option._id} value={option.name} id_key={option._id}>
               {option.name}
             </option>
           ))}
