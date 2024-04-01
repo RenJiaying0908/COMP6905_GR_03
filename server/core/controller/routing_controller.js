@@ -39,8 +39,7 @@ function cacheRoutes(routes) {
       // console.log(routeMap);
       const fromNode = routeMap[route.fromNode.toString()];
       const toNode = routeMap[route.toNode.toString()];
-      if(fromNode&&toNode)
-      {
+      if (fromNode && toNode) {
         if (!fromNode.neighbors[route.toNode.toString()]) {
           fromNode.neighbors[route.toNode.toString()] = new Set();
         }
@@ -52,8 +51,8 @@ function cacheRoutes(routes) {
       }
     }
 
-    console.log("route map is :")
-    console.log("***",routeMap);
+    console.log("route map is :");
+    console.log("***", routeMap);
   }
 }
 
@@ -88,29 +87,23 @@ function findAllPaths(startId, endId) {
 // }
 
 function dfs(currentId, endId, visited, path, paths) {
-
   console.log(`Visiting node ${currentId}, path so far: ${path.join(" -> ")}`);
-  if (currentId == endId) {
 
-  }
-  path.push(currentId);
   visited.add(currentId);
 
-  if (currentId === endId) {
-    paths.push([...path]);
-  } else {
-    for (let neighborId of routeMap[currentId].neighbors) {
-      if (!visited.has(neighborId)) {
-        dfs(graph, neighborId, endId, visited, path, paths);
-      }
+  if (currentId == endId) {
+    paths.add(path);
+    return paths;
+  }
+
+  for (const neighborId of routeMap[currentId].neighbors) {
+    if (!visited.includes(neighborId)) {
+      path.push(neighborId);
+      dfs(neighborId, endId, visited, path, paths);
+      path.delete(neighborId);
     }
   }
 
-  path.pop();
-  visited.delete(currentId);
-
-//  console.log("Paths:", pa);
-  
   return paths;
 }
 
@@ -218,7 +211,7 @@ class RoutingController {
       color: item.color,
       route_type: lifts.includes(item) ? "lift" : "slope", // Distinguish between lifts and slopes
       name: item.name,
-      distance: item.length !== undefined ? item.length : -1, 
+      distance: item.length !== undefined ? item.length : -1,
     }));
 
     cacheNodes(routesNodes);
@@ -277,12 +270,15 @@ class RoutingController {
   async searchRoute(message) {
     try {
       console.log("Searchable Nodes:", message);
-      const paths = findAllPaths(message.data.data.fromNode, message.data.data.toNode);
+      const paths = findAllPaths(
+        message.data.data.fromNode,
+        message.data.data.toNode
+      );
 
       console.log("*Paths*", paths);
       const res = {
         id: message.id,
-        data: { 
+        data: {
           results: paths,
         },
       };
