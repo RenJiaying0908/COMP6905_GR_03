@@ -15,12 +15,15 @@ class Node {
 }
 
 const routeMap = new Map();
+const nodesMap = new Map();
 
 function cacheNodes(nodes) {
   if (nodes) {
+    //console.log("cache nodes--------");
     for (const node of nodes) {
-      nodesMap[node.sid] = node;
-      //routeMap[node.sid] = new Node(node.sid, new Map());
+      //console.log("cache nodes-------- :", node);
+      nodesMap[node._id] = node;
+      routeMap[node._id] = new Node(node._id, new Map());
     }
   }
 }
@@ -30,31 +33,65 @@ function cacheRoutes(routes) {
   console.log(routeMap);
   if (routes) {
     for (const route of routes) {
+      // console.log("route info: ");
+      // console.log(route);
+      // console.log("route map info: ");
+      // console.log(routeMap);
       const fromNode = routeMap[route.fromNode.toString()];
       const toNode = routeMap[route.toNode.toString()];
-      if (!fromNode.neighbors[route.toNode.toString()]) {
-        fromNode.neighbors[route.toNode.toString()] = new Set();
+      if(fromNode&&toNode)
+      {
+        if (!fromNode.neighbors[route.toNode.toString()]) {
+          fromNode.neighbors[route.toNode.toString()] = new Set();
+        }
+        fromNode.neighbors[route.toNode.toString()].add(route.id);
+        if (!toNode.neighbors[route.fromNode.toString()]) {
+          toNode.neighbors[route.fromNode.toString()] = new Set();
+        }
+        toNode.neighbors[route.fromNode.toString()].add(route.id);
       }
-      fromNode.neighbors[route.toNode.toString()].add(route.id);
-      if (!toNode.neighbors[route.fromNode.toString()]) {
-        toNode.neighbors[route.fromNode.toString()] = new Set();
-      }
-      toNode.neighbors[route.fromNode.toString()].add(route.id);
     }
-    console.log(routeMap);
+
+    console.log("route map is :")
+    console.log("***",routeMap);
   }
 }
 
 function findAllPaths(startId, endId) {
   let visited = new Set();
   let paths = [];
-  dfs(startId, endId, visited, paths);
+  paths = dfs(startId, endId, visited, paths, []);
   return paths;
 }
 
+// function dfs(graph, start, end, visited, path, shortestPath, distance) {
+//   visited[start] = true;
+//   path.push(start);
+
+//   if (start === end) {
+//       if (distance < shortestPath.distance || shortestPath.distance === -1) {
+//           shortestPath.distance = distance;
+//           shortestPath.path = [...path];
+//       }
+//   } else {
+//       for (const route of graph) {
+//           if (route.fromNode === start && !visited[route.toNode]) {
+//               dfs(graph, route.toNode, end, visited, path, shortestPath, distance + route.distance);
+//           }
+//       }
+//   }
+
+//   path.pop();
+//   visited[start] = false;
+
+//   return path;
+// }
+
 function dfs(currentId, endId, visited, path, paths) {
+
   console.log(`Visiting node ${currentId}, path so far: ${path.join(" -> ")}`);
   if (currentId == endId) {
+
   }
   path.push(currentId);
   visited.add(currentId);
@@ -62,7 +99,7 @@ function dfs(currentId, endId, visited, path, paths) {
   if (currentId === endId) {
     paths.push([...path]);
   } else {
-    for (let neighborId of graph[currentId].neighbors) {
+    for (let neighborId of routeMap[currentId].neighbors) {
       if (!visited.has(neighborId)) {
         dfs(graph, neighborId, endId, visited, path, paths);
       }
@@ -71,6 +108,10 @@ function dfs(currentId, endId, visited, path, paths) {
 
   path.pop();
   visited.delete(currentId);
+
+//  console.log("Paths:", pa);
+  
+  return paths;
 }
 
 class RoutingController {
@@ -96,7 +137,7 @@ class RoutingController {
         this.addRoute(mes);
       } else if (mes.data.type == constants.GET_SEARCHABLE_ROUTE) {
         this.searchRoute(mes);
-      } else if (mes.data.type == constants.GET_LIFTS) {
+      } else if (mes.data.type == constants.SEAR) {
         this.getLifts(mes);
       }
     });
@@ -180,7 +221,9 @@ class RoutingController {
       distance: item.length !== undefined ? item.length : -1, 
     }));
 
-    // Assemble and return the final structure
+    cacheNodes(routesNodes);
+    cacheRoutes(routes);
+
     const res = {
       id: message.id,
       data: {
@@ -233,20 +276,14 @@ class RoutingController {
 
   async searchRoute(message) {
     try {
-      const routes = [
-        ["65fa297b0c293d4bb5c51323"],
-        [
-          "65fa28c00c293d4bb5c5131f",
-          "65fa3f970a3c3e07ca59f753",
-          "65fa3fd60a3c3e07ca59f755",
-          "65fa29e50c293d4bb5c5132b",
-        ],
-      ];
+      console.log("Searchable Nodes:", message);
+      const paths = findAllPaths(message.data.data.fromNode, message.data.data.toNode);
 
+      console.log("*Paths*", paths);
       const res = {
         id: message.id,
-        data: {
-          results: routes,
+        data: { 
+          results: paths,
         },
       };
       event.emit(constants.EVENT_OUT, res);

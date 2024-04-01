@@ -70,15 +70,6 @@ Content-Type: application/json
     "type":"find_facilities"
 }
 
-
-###  test run
-POST http://localhost:3001/submit-data
-Content-Type: application/json
-
-{
-    "type":"get_routes"
-}
-
 ###  test run
 POST http://localhost:3001/submit-data
 Content-Type: application/json
@@ -161,6 +152,23 @@ Content-Type: application/json
     "type":"get_slopes"
 }
 
+###  test run
+POST http://localhost:3001/submit-data
+Content-Type: application/json
 
+{
+    "type":"get_routes"
+}
 
+###  DFS test run
+POST http://localhost:3001/submit-data
+Content-Type: application/json
 
+{
+    "type":"search_route",
+    "data":{  
+        "fromNode":"100E",
+        "toNode":"101E"
+    }
+
+}
