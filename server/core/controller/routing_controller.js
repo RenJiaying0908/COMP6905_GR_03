@@ -22,8 +22,8 @@ function cacheNodes(nodes) {
     //console.log("cache nodes--------");
     for (const node of nodes) {
       //console.log("cache nodes-------- :", node);
-      nodesMap[node._id] = node;
-      routeMap[node._id] = new Node(node._id, new Map());
+      nodesMap.set(node._id, node);
+      routeMap.set(node._id, new Node(node._id, new Map()));
     }
   }
 }
@@ -37,17 +37,17 @@ function cacheRoutes(routes) {
       // console.log(route);
       // console.log("route map info: ");
       // console.log(routeMap);
-      const fromNode = routeMap[route.fromNode.toString()];
-      const toNode = routeMap[route.toNode.toString()];
+      const fromNode = routeMap.get(route.fromNode.toString());
+      const toNode = routeMap.get(route.toNode.toString());
       if (fromNode && toNode) {
-        if (!fromNode.neighbors[route.toNode.toString()]) {
-          fromNode.neighbors[route.toNode.toString()] = new Set();
+        if (!fromNode.neighbors.get(route.toNode.toString())) {
+          fromNode.neighbors.set(route.toNode.toString(), new Set());
         }
-        fromNode.neighbors[route.toNode.toString()].add(route.id);
-        if (!toNode.neighbors[route.fromNode.toString()]) {
-          toNode.neighbors[route.fromNode.toString()] = new Set();
+        fromNode.neighbors.get(route.toNode.toString()).add(route.id);
+        if (!toNode.neighbors.get(route.fromNode.toString())) {
+          toNode.neighbors.set(route.fromNode.toString(), new Set());
         }
-        toNode.neighbors[route.fromNode.toString()].add(route.id);
+        toNode.neighbors.get(route.fromNode.toString()).add(route.id);
       }
     }
 
@@ -89,20 +89,28 @@ function findAllPaths(startId, endId) {
 function dfs(currentId, endId, visited, path, paths) {
   console.log(`Visiting node ${currentId}, path so far: ${path.join(" -> ")}`);
 
+  // 标记当前节点为已访问
   visited.add(currentId);
 
-  if (currentId == endId) {
-    paths.add(path);
-    return paths;
-  }
+  // 将当前节点添加到路径
+  path.push(currentId);
 
-  for (const neighborId of routeMap[currentId].neighbors) {
-    if (!visited.includes(neighborId)) {
-      path.push(neighborId);
-      dfs(neighborId, endId, visited, path, paths);
-      path.delete(neighborId);
+  if (currentId == endId) {
+    // 找到路径，添加到结果中
+    paths.push([...path]); // 使用副本以避免引用问题
+  } else {
+    let keys = [...routeMap.get(currentId).neighbors.keys()];
+    for (const key of keys) {
+      if (!visited.has(key)) {
+        // 使用 has 检查 Set
+        dfs(key, endId, visited, path, paths);
+      }
     }
   }
+
+  // 在返回之前回溯：移除路径的最后一个元素并从已访问集合中移除
+  path.pop();
+  visited.delete(currentId);
 
   return paths;
 }
