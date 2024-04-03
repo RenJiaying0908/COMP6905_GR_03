@@ -1,9 +1,8 @@
-import React from 'react';
-import './Header.css';
-import postData from './messenger';
+import React from "react";
+import "./Header.css";
+import postData from "./messenger";
 
 function Header() {
-
   const handleClick = (e) => {
     // Prevent default navigation behavior
     e.preventDefault();
@@ -11,38 +10,37 @@ function Header() {
     // Execute any logic here
     console.log("Link clicked!");
     const data = {
-      type: 'get_nodes',
-      data: {}
+      type: "search_route",
+      data: {
+        fromNode: "100E",
+        toNode: "101E",
+      },
     };
 
-    postData(data, (error, data)=>{
-      if(error)
-      {
+    postData(data, (error, data) => {
+      if (error) {
         alert(error);
-      }else
-      {
+      } else {
         alert(data.key);
       }
-
     });
-
   };
 
   return (
     <header className="site-header">
       <nav className="site-nav">
         <div className="nav-links">
-          <a href="/ski-resort">Ski Resort</a >
-          <a href="/info" onClick={handleClick}>Information</a >
-          <a href="/region">Region</a >
-          <a href="/tickets">Tickets</a >
+          <a href="/ski-resort">Ski Resort</a>
+          <a href="/info" onClick={handleClick}>
+            Information
+          </a>
+          <a href="/region">Region</a>
+          <a href="/tickets">Tickets</a>
         </div>
-        <div className="nav-icons">
-        </div>
+        <div className="nav-icons"></div>
       </nav>
       <div className="hero">
         <h1>xxx ski facility</h1>
-
       </div>
     </header>
   );

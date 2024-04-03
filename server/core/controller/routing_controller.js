@@ -7,6 +7,13 @@ const Lift = require("../model/lift");
 const Slope = require("../model/slope");
 const StartEndNode = require("../model/start_end_nodes");
 
+class Node {
+  constructor(id, neighbors = {}) {
+    this.id = id;
+    this.neighbors = neighbors;
+  }
+}
+
 const routeMap = new Map();
 const nodesMap = new Map();
 
@@ -16,6 +23,7 @@ function cacheNodes(nodes) {
     for (const node of nodes) {
       //console.log("cache nodes-------- :", node);
       nodesMap.set(node._id, node);
+      routeMap.set(node._id, new Node(node._id, new Map()));
     }
   }
 }
@@ -25,26 +33,19 @@ function cacheRoutes(routes) {
   console.log(routeMap);
   if (routes) {
     for (const route of routes) {
-      routeMap.set(route._id, []);
-    }
+      // console.log("route info: ");
+      // console.log(route);
+      // console.log("route map info: ");
+      // console.log(routeMap);
+      const fromNode = routeMap.get(route.fromNode.toString());
+      const toNode = routeMap.get(route.toNode.toString());
+      if (fromNode && toNode) {
+        if (!fromNode.neighbors.get(route.toNode.toString())) {
+          fromNode.neighbors.set(route.toNode.toString(), route.id);
+        }
 
-    for (const route of routes) {
-      const fromNode = route.fromNode.toString();
-      const toNode = route.toNode.toString();
-      for (const neighbor of routes) {
-        if (route._id != neighbor._id) {
-          const neighber_fromNode = neighbor.fromNode.toString();
-          const neighber_toNode = neighbor.toNode.toString();
-          if (
-            fromNode == neighber_toNode ||
-            toNode == neighber_fromNode ||
-            fromNode == neighber_fromNode ||
-            toNode == neighber_toNode
-          ) {
-            if (!routeMap.get(route._id).includes(neighbor._id)) {
-              routeMap.get(route._id).push(neighbor._id);
-            }
-          }
+        if (!toNode.neighbors.get(route.fromNode.toString())) {
+          toNode.neighbors.set(route.fromNode.toString(), route.id);
         }
       }
     }
@@ -56,8 +57,21 @@ function cacheRoutes(routes) {
 
 function findAllPaths(startId, endId) {
   let visited = new Set();
+  let nodes_array = dfs(startId, endId, visited, [], []);
   let paths = [];
-  paths = dfs(startId, endId, visited, paths, []);
+  for (const nodes of nodes_array) {
+    let path = [];
+    let prev = null;
+    for (const node of nodes) {
+      if (!prev) {
+        prev = node;
+      } else {
+        path.push(routeMap.get(prev).neighbors.get(node));
+        prev = node;
+      }
+    }
+    paths.push(path);
+  }
   return paths;
 }
 
@@ -87,20 +101,26 @@ function findAllPaths(startId, endId) {
 function dfs(currentId, endId, visited, path, paths) {
   console.log(`Visiting node ${currentId}, path so far: ${path.join(" -> ")}`);
 
+  // 标记当前节点为已访问
   visited.add(currentId);
 
+  // 将当前节点添加到路径
   path.push(currentId);
 
   if (currentId == endId) {
-    paths.push([...path]);
+    // 找到路径，添加到结果中
+    paths.push([...path]); // 使用副本以避免引用问题
   } else {
-    let keys = [...routeMap.get(currentId)];
+    let keys = [...routeMap.get(currentId).neighbors.keys()];
     for (const key of keys) {
       if (!visited.has(key)) {
+        // 使用 has 检查 Set
         dfs(key, endId, visited, path, paths);
       }
     }
   }
+
+  // 在返回之前回溯：移除路径的最后一个元素并从已访问集合中移除
   path.pop();
   visited.delete(currentId);
 
@@ -270,7 +290,10 @@ class RoutingController {
   async searchRoute(message) {
     try {
       console.log("Searchable Nodes:", message);
-      const paths = findAllPaths(message.data.data.from, message.data.data.to);
+      const paths = findAllPaths(
+        message.data.data.fromNode,
+        message.data.data.toNode
+      );
 
       console.log("*Paths*", paths);
       const res = {
