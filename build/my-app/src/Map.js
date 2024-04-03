@@ -508,11 +508,23 @@ const SkiResortMap = () => {
   };
 
   const handleSearch = () => {
+    var startElement = document.getElementById("startLocationSelect");
+    var start_id =
+      startElement.options[startElement.selectedIndex].getAttribute("id_key");
+
+    var endElement = document.getElementById("destinationSelect");
+    var end_id =
+      endElement.options[endElement.selectedIndex].getAttribute("id_key");
+
+    if (!start_id || !end_id) {
+      alert("please select start/end location.");
+    }
+
     const requestBody = {
       type: "search_route",
       data: {
-        startNode: "65f9b40bd3f604153d1d9b5f",
-        endNode: "65f9b4e8d3f604153d1d9b67",
+        fromRoute: start_id,
+        toRoute: end_id,
       },
     };
 
@@ -523,19 +535,15 @@ const SkiResortMap = () => {
       } else {
         console.log(data);
         if (data.results) {
-          toggleMarkerVisibility("65f9b40bd3f604153d1d9b5f", true);
-          toggleMarkerVisibility("65f9b4e8d3f604153d1d9b67", true);
-          for (var i = 0; i < data.results.length; i++) {
-            const array = data.results[i];
-            var color = i == 0 ? "orange" : "red";
-            if (array) {
-              for (const id of array) {
-                changeConnectionStyle(id, polyLineHighlitedStyle);
-                changeConnectionColor(id, color);
-                renderPolyLine(id);
+          let paths = [];
+          for (const array of data.results) {
+            for (const path of array) {
+              if (!paths.includes(path)) {
+                paths.push(polyLineMap.current.get(String(path)));
               }
             }
           }
+          startBlinking(paths);
         }
       }
     });

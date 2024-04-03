@@ -34,7 +34,7 @@ function cacheRoutes(routes) {
   console.log(routeMap);
   if (routes) {
     for (const route of routes) {
-      cache_routes.set(route._id, route);
+      cache_routes.set(String(route._id), route);
       // console.log("route info: ");
       // console.log(route);
       // console.log("route map info: ");
@@ -72,16 +72,16 @@ function findAllPaths(startId, endId, fromRoute, endRoute) {
         prev = node;
       }
     }
-    
+
     paths.push(path);
   }
 
-  for(const _path of paths){
-    if(!_path.includes(fromRoute)){
-      _path.unshift(fromRoute)
+  for (const _path of paths) {
+    if (!_path.includes(fromRoute)) {
+      _path.unshift(fromRoute);
     }
-    if(!_path.includes(endRoute)){
-      _path.push(endRoute)
+    if (!_path.includes(endRoute)) {
+      _path.push(endRoute);
     }
   }
   return paths;
@@ -302,10 +302,10 @@ class RoutingController {
   async searchRoute(message) {
     try {
       console.log("Searchable Nodes:", message);
-      
+
       const paths = findAllPaths(
-        cache_routes.get(message.data.data.fromRoute).fromNode,
-        cache_routes.get(message.data.data.toRoute).toNode,
+        cache_routes.get(String(message.data.data.fromRoute)).fromNode,
+        cache_routes.get(String(message.data.data.toRoute)).toNode,
         message.data.data.fromRoute,
         message.data.data.toRoute
       );
