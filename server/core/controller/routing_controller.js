@@ -57,7 +57,7 @@ function cacheRoutes(routes) {
   }
 }
 
-function findAllPaths(startId, endId, fromRoute, endRoute) {
+function findAllPaths(startId, endId, fromRoute, endRoute, difficulty) {
   let visited = new Set();
   let nodes_array = dfs(startId, endId, visited, [], []);
   let paths = [];
@@ -84,8 +84,30 @@ function findAllPaths(startId, endId, fromRoute, endRoute) {
       _path.push(endRoute);
     }
   }
-  return paths;
+
+  const filteredPaths  = filterPaths(paths, difficulty)
+  return filteredPaths;
 }
+
+function filterPaths(paths, difficulty) {
+  const filteredPaths = [];
+
+  paths.forEach(subArray => {
+      const hasMatchingRoute = subArray.some(id => {
+          const route = cache_routes.get(id);
+          return route && route.color === difficulty;
+      });
+
+      if (hasMatchingRoute) {
+          filteredPaths.push(subArray);
+      }
+  });
+
+  return filteredPaths;
+}
+
+
+
 
 // function dfs(graph, start, end, visited, path, shortestPath, distance) {
 //   visited[start] = true;
@@ -307,7 +329,8 @@ class RoutingController {
         cache_routes.get(String(message.data.data.fromRoute)).fromNode,
         cache_routes.get(String(message.data.data.toRoute)).toNode,
         message.data.data.fromRoute,
-        message.data.data.toRoute
+        message.data.data.toRoute,
+        message.data.data.difficulty
       );
 
       console.log("*Paths*", paths);

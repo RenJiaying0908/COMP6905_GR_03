@@ -78,7 +78,6 @@ Content-Type: application/json
     "type":"find_routes"
 }
 
-
 ###  test run
 POST http://localhost:3001/submit-data
 Content-Type: application/json
@@ -152,7 +151,6 @@ Content-Type: application/json
     "type":"get_slopes"
 }
 
-
 ###  test run
 POST http://localhost:3001/submit-data
 Content-Type: application/json
@@ -160,6 +158,7 @@ Content-Type: application/json
 {
     "type":"get_routes"
 }
+
 
 ###  DFS test run
 POST http://localhost:3001/submit-data
@@ -173,3 +172,27 @@ Content-Type: application/json
     }
 
 }
+
+
+
+###  DFS actual run
+POST http://localhost:3001/submit-data
+Content-Type: application/json
+
+{
+    "type":"search_route",
+    "data":{  
+        "fromRoute":"660700469c510edf3af67164",
+        "toRoute":"660700469c510edf3af67167",
+        "difficulty": "green",
+        "duration":"short"
+    }
+}
+
+
+    #   const res = {
+    #     id: message.id,
+    #     data: {
+    #       results: paths, [ids of routes]
+    #     },
+    #   };
