@@ -513,6 +513,7 @@ const SkiResortMap = () => {
   };
 
   const handleSearch = () => {
+    handleReset();
     var startElement = document.getElementById("startLocationSelect");
     var start_id =
       startElement.options[startElement.selectedIndex].getAttribute("id_key");
