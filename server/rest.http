@@ -167,8 +167,8 @@ Content-Type: application/json
 {
     "type":"search_route",
     "data":{  
-        "fromNode":"100E",
-        "toNode":"101E"
+        "from":"660700469c510edf3af67165",
+        "to":"660700469c510edf3af67167"
     }
 
 }
