@@ -15,6 +15,7 @@ class Node {
 }
 
 const routeMap = new Map();
+const cache_routes = new Map();
 const nodesMap = new Map();
 
 function cacheNodes(nodes) {
@@ -33,6 +34,7 @@ function cacheRoutes(routes) {
   console.log(routeMap);
   if (routes) {
     for (const route of routes) {
+      cache_routes.set(route._id, route);
       // console.log("route info: ");
       // console.log(route);
       // console.log("route map info: ");
@@ -55,7 +57,7 @@ function cacheRoutes(routes) {
   }
 }
 
-function findAllPaths(startId, endId) {
+function findAllPaths(startId, endId, fromRoute, endRoute) {
   let visited = new Set();
   let nodes_array = dfs(startId, endId, visited, [], []);
   let paths = [];
@@ -70,7 +72,17 @@ function findAllPaths(startId, endId) {
         prev = node;
       }
     }
+    
     paths.push(path);
+  }
+
+  for(const _path of paths){
+    if(!_path.includes(fromRoute)){
+      _path.unshift(fromRoute)
+    }
+    if(!_path.includes(endRoute)){
+      _path.push(endRoute)
+    }
   }
   return paths;
 }
@@ -145,7 +157,7 @@ class RoutingController {
       } else if (mes.data.type == constants.ADD_SLOPE) {
         this.addSlope(mes);
       } else if (mes.data.type == constants.GET_NODES) {
-        this.getNodeIds(mes);
+        //this.getNodeIds(mes);
       } else if (mes.data.type == constants.ADD_ROUTE) {
         this.addRoute(mes);
       } else if (mes.data.type == constants.GET_SEARCHABLE_ROUTE) {
@@ -265,34 +277,37 @@ class RoutingController {
     }
   }
 
-  async getNodeIds(message) {
-    try {
-      console.log(message);
-      const fromId = message.data.data.fromNode;
-      const toId = message.data.data.toNode;
+  // async getNodeIds(message) {
+  //   try {
+  //     console.log(message);
+  //     const fromId = message.data.data.fromNode;
+  //     const toId = message.data.data.toNode;
 
-      console.log(fromId + "," + toId);
+  //     console.log(fromId + "," + toId);
 
-      const paths = await findAllPaths(fromId, toId);
+  //     const paths = await findAllPaths(fromId, toId);
 
-      const res = {
-        id: message.id,
-        data: {
-          results: paths,
-        },
-      };
-      event.emit(constants.EVENT_OUT, res);
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
+  //     const res = {
+  //       id: message.id,
+  //       data: {
+  //         results: paths,
+  //       },
+  //     };
+  //     event.emit(constants.EVENT_OUT, res);
+  //   } catch (error) {
+  //     console.log(error.message);
+  //   }
+  // }
 
   async searchRoute(message) {
     try {
       console.log("Searchable Nodes:", message);
+      
       const paths = findAllPaths(
-        message.data.data.fromNode,
-        message.data.data.toNode
+        cache_routes.get(message.data.data.fromRoute).fromNode,
+        cache_routes.get(message.data.data.toRoute).toNode,
+        message.data.data.fromRoute,
+        message.data.data.toRoute
       );
 
       console.log("*Paths*", paths);
