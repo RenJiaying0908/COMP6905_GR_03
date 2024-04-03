@@ -176,7 +176,7 @@ const SkiResortMap = () => {
   const [fromNodeOptions, setFromNodeOptions] = useState([]);
   const [toNodeOptions, setToNodeOptions] = useState([]);
   const [isMarkerVisible, setIsMarkerVisible] = useState([]);
-
+  const [message, setMessage] = useState(["information will be shown here"]);
   const [connectionColors, setConnectionColors] = useState({});
   const [connectionStyles, setConnectionStyles] = useState({});
   const [polyLineKey, setPolyKey] = useState({});
@@ -507,6 +507,11 @@ const SkiResortMap = () => {
     opacity: 1,
   };
 
+  const handleReset = () => {
+    setMessage(["information will be shown here"]);
+    stopBlinking();
+  };
+
   const handleSearch = () => {
     var startElement = document.getElementById("startLocationSelect");
     var start_id =
@@ -516,8 +521,15 @@ const SkiResortMap = () => {
     var end_id =
       endElement.options[endElement.selectedIndex].getAttribute("id_key");
 
+    var difficultyElement = document.getElementById("difficultySelect");
+    var difficulty =
+      difficultyElement.options[difficultyElement.selectedIndex].getAttribute(
+        "id_key"
+      );
+
     if (!start_id || !end_id) {
-      alert("please select start/end location.");
+      const msg = "please select start/end location.";
+      setMessage([msg]);
     }
 
     const requestBody = {
@@ -525,6 +537,7 @@ const SkiResortMap = () => {
       data: {
         fromRoute: start_id,
         toRoute: end_id,
+        difficulty: difficulty,
       },
     };
 
@@ -536,13 +549,31 @@ const SkiResortMap = () => {
         console.log(data);
         if (data.results) {
           let paths = [];
+          if (data.results.length == 0) {
+            const msg = "no matching route founded.";
+            setMessage([msg]);
+            return;
+          }
+          var msg = `Found ${data.results.length} routes according to preference!<br/>`;
+
           for (const array of data.results) {
+            var path_msg = "";
+            var i = 0;
             for (const path of array) {
-              if (!paths.includes(path)) {
+              if (!paths.includes(polyLineMap.current.get(String(path)))) {
                 paths.push(polyLineMap.current.get(String(path)));
               }
+              path_msg += `${routeMap[String(path)].name}`;
+              if (i != array.length - 1) {
+                path_msg += " -> ";
+              }
+              i++;
             }
+            path_msg += "<br/>";
+            msg += path_msg;
           }
+          const routesArray = msg.split("<br/>").filter((line) => line);
+          setMessage(routesArray);
           startBlinking(paths);
         }
       }
@@ -678,23 +709,30 @@ const SkiResortMap = () => {
           onChange={handlePreferencesChange}
         >
           <option value="Any">Difficulty: Any</option>
-          <option value="Beginner">Beginner</option>
-          <option value="Intermediate">Intermediate</option>
-          <option value="Advanced">Advanced</option>
-        </select>
-        <select
-          style={{ width: "85%" }}
-          name="duration"
-          id="durationSelect"
-          value={preferences.duration}
-          onChange={handlePreferencesChange}
-        >
-          <option value="Any">Duration: Any</option>
-          <option value="Short">Short</option>
-          <option value="Medium">Medium</option>
-          <option value="Long">Long</option>
+          <option value="Beginner" id_key="green">
+            Beginner
+          </option>
+          <option value="Intermediate" id_key="blue">
+            Intermediate
+          </option>
+          <option value="Advanced" id_key="black">
+            Advanced
+          </option>
         </select>
         <button onClick={handleSearch}>Search</button>
+        <button onClick={handleReset}>reset</button>
+      </div>
+      <div>
+        {message.map((route, index) => (
+          <p key={index}>
+            {route.split("->").map((segment, index, array) => (
+              <React.Fragment key={index}>
+                {segment}
+                {index < array.length - 1 && <strong> -&gt; </strong>}
+              </React.Fragment>
+            ))}
+          </p>
+        ))}
       </div>
       <hr className="horizontal-line"></hr>
       <div ref={mapRef} style={{ height: "700px", width: "80%" }} />
