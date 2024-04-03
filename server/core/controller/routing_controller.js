@@ -77,16 +77,23 @@ function findAllPaths(startId, endId, fromRoute, endRoute, difficulty) {
   }
 
   for (const _path of paths) {
-    if (!_path.includes(fromRoute)) {
-      _path.unshift(fromRoute);
-    }
-    if (!_path.includes(endRoute)) {
-      _path.push(endRoute);
+    if(_path.length>0)
+    {
+      if (!_path.includes(fromRoute)) {
+        _path.unshift(fromRoute);
+      }
+      if (!_path.includes(endRoute)) {
+        _path.push(endRoute);
+      }
     }
   }
 
+  if(!difficulty || difficulty == undefined || difficulty == "")
+  {
+    return paths;
+  }
   const filteredPaths  = filterPaths(paths, difficulty)
-  return filteredPaths;
+  return  filteredPaths;
 }
 
 function filterPaths(paths, difficulty) {
