@@ -511,11 +511,11 @@ const SkiResortMap = () => {
   const handleCheckboxChange = (event, index) => {
     if (
       searchRouteResult.current &&
-      index >= 0 &&
-      index < searchRouteResult.current.length
+      index - 1 >= 0 &&
+      index - 1 < searchRouteResult.current.length
     ) {
       stopBlinking();
-      startBlinking(searchRouteResult.current[index]);
+      startBlinking(searchRouteResult.current[index - 1]);
     }
   };
 
