@@ -568,12 +568,17 @@ const SkiResortMap = () => {
             return;
           }
           var msg = `Found ${data.results.length} routes according to preference! using checkbox to show your prefered route!<br/>`;
+          var msg_array = [];
+          var distance_array = [];
           searchRouteResult.current = [];
+          var round = 0;
           for (const array of data.results) {
             var path_msg = "";
             var i = 0;
             var distance = 0;
             var single_path = [];
+            var longgest_index = 0;
+            var shortest_index = 0;
             for (const path of array) {
               if (routeMap[String(path)].route_type == "slope") {
                 distance += routeMap[String(path)].distance;
@@ -592,8 +597,26 @@ const SkiResortMap = () => {
               i++;
             }
             searchRouteResult.current.push(single_path);
-            path_msg += "<br/>";
-            msg += path_msg;
+            msg_array.push(path_msg);
+            distance_array.push(distance);
+            if (distance > distance_array[longgest_index]) {
+              longgest_index = round;
+            }
+            if (distance < distance_array[shortest_index]) {
+              shortest_index = round;
+            }
+            round++;
+          }
+          for (var j = 0; j < msg_array.length; j++) {
+            if (msg_array.length > 1) {
+              if (j == longgest_index) {
+                msg_array[j] += " --Longgest Route";
+              } else if (j == shortest_index) {
+                msg_array[j] += " --shortest Route";
+              }
+            }
+            msg_array[j] += "<br/>";
+            msg += msg_array[j];
           }
           const routesArray = msg.split("<br/>").filter((line) => line);
           setMessage(routesArray);
@@ -756,12 +779,23 @@ const SkiResortMap = () => {
               />
             )}
             <p style={{ marginLeft: "5px" }}>
-              {route.split("->").map((segment, index, array) => (
-                <React.Fragment key={index}>
-                  {segment}
-                  {index < array.length - 1 && <strong> -&gt; </strong>}
-                </React.Fragment>
-              ))}
+              {route.split("->").map((segment, index, array) => {
+                const isLastSegment = index === array.length - 1;
+                const segmentTrimmed = segment.trim();
+                const isLongest = segmentTrimmed.includes("--Longgest Route");
+                const isShortest = segmentTrimmed.includes("--shortest Route");
+
+                return (
+                  <React.Fragment key={index}>
+                    {isLongest || isShortest ? (
+                      <strong>{segmentTrimmed}</strong>
+                    ) : (
+                      segmentTrimmed
+                    )}
+                    {!isLastSegment && <strong> -&gt; </strong>}
+                  </React.Fragment>
+                );
+              })}
             </p>
           </div>
         ))}
