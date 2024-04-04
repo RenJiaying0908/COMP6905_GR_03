@@ -30,8 +30,8 @@ function cacheNodes(nodes) {
 }
 
 function cacheRoutes(routes) {
-  console.log("cache routemap");
-  console.log(routeMap);
+  //console.log("cache routemap");
+  //console.log(routeMap);
   if (routes) {
     for (const route of routes) {
       cache_routes.set(String(route._id), route);
@@ -52,8 +52,8 @@ function cacheRoutes(routes) {
       }
     }
 
-    console.log("route map is :");
-    console.log("***", routeMap);
+    //console.log("route map is :");
+    //console.log("***", routeMap);
   }
 }
 
@@ -140,7 +140,7 @@ function filterPaths(paths, difficulty) {
 // }
 
 function dfs(currentId, endId, visited, path, paths) {
-  console.log(`Visiting node ${currentId}, path so far: ${path.join(" -> ")}`);
+  //console.log(`Visiting node ${currentId}, path so far: ${path.join(" -> ")}`);
 
   // 标记当前节点为已访问
   visited.add(currentId);
@@ -171,12 +171,12 @@ function dfs(currentId, endId, visited, path, paths) {
 class RoutingController {
   constructor() {
     event.on(constants.EVENT_IN, (mes) => {
-      console.log(
-        "post message received, id: ",
-        mes.id,
-        ", type: ",
-        mes.data.type
-      );
+      // console.log(
+      //   "post message received, id: ",
+      //   mes.id,
+      //   ", type: ",
+      //   mes.data.type
+      // );
       if (mes.data.type == constants.FIND_ROUTE) {
         this.findRoutes(mes);
       } else if (mes.data.type == constants.GET_ROUTE) {
@@ -215,7 +215,7 @@ class RoutingController {
 
   async addSlope(message) {
     try {
-      console.log(message.data);
+      //console.log(message.data);
       const slope = new Slope(message.data.data);
       const result = await slope.save();
       const res = {
@@ -232,7 +232,7 @@ class RoutingController {
 
   async addRoute(message) {
     try {
-      console.log(message.data);
+      //console.log(message.data);
       const route = new Route(message.data.data);
       const result = await route.save();
       const res = {
@@ -330,7 +330,7 @@ class RoutingController {
 
   async searchRoute(message) {
     try {
-      console.log("Searchable Nodes:", message);
+      //console.log("Searchable Nodes:", message);
 
       const paths = findAllPaths(
         cache_routes.get(String(message.data.data.fromRoute)).fromNode,
@@ -340,7 +340,7 @@ class RoutingController {
         message.data.data.difficulty
       );
 
-      console.log("*Paths*", paths);
+      //console.log("*Paths*", paths);
       const res = {
         id: message.id,
         data: {
