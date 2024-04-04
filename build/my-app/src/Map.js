@@ -159,6 +159,7 @@ const SkiResortMap = () => {
   const [polylineOriginalColors, setPolylineOriginalColors] = useState({});
   const mapRef = useRef(null);
   const polylineOriginalColorsRef = useRef(new Map()); // Use a ref to store original colors
+  const searchRouteResult = useRef([]);
   const liftMarderOpacityRef = new Map();
   const [startingLocation, setStartingLocation] = useState("");
   const [destination, setDestination] = useState("");
@@ -507,6 +508,17 @@ const SkiResortMap = () => {
     opacity: 1,
   };
 
+  const handleCheckboxChange = (event, index) => {
+    if (
+      searchRouteResult.current &&
+      index >= 0 &&
+      index < searchRouteResult.current.length
+    ) {
+      stopBlinking();
+      startBlinking(searchRouteResult.current[index]);
+    }
+  };
+
   const handleReset = () => {
     setMessage(["information will be shown here"]);
     stopBlinking();
@@ -555,21 +567,31 @@ const SkiResortMap = () => {
             setMessage([msg]);
             return;
           }
-          var msg = `Found ${data.results.length} routes according to preference!<br/>`;
-
+          var msg = `Found ${data.results.length} routes according to preference! using checkbox to show your prefered route!<br/>`;
+          searchRouteResult.current = [];
           for (const array of data.results) {
             var path_msg = "";
             var i = 0;
+            var distance = 0;
+            var single_path = [];
             for (const path of array) {
+              if (routeMap[String(path)].route_type == "slope") {
+                distance += routeMap[String(path)].distance;
+              }
               if (!paths.includes(polyLineMap.current.get(String(path)))) {
                 paths.push(polyLineMap.current.get(String(path)));
               }
+              single_path.push(polyLineMap.current.get(String(path)));
               path_msg += `${routeMap[String(path)].name}`;
+              path_msg += `(${routeMap[String(path)].route_type})`;
               if (i != array.length - 1) {
                 path_msg += " -> ";
+              } else {
+                path_msg += `   (total distance: ${distance} )`;
               }
               i++;
             }
+            searchRouteResult.current.push(single_path);
             path_msg += "<br/>";
             msg += path_msg;
           }
@@ -723,16 +745,25 @@ const SkiResortMap = () => {
         <button onClick={handleSearch}>Search</button>
         <button onClick={handleReset}>reset</button>
       </div>
-      <div>
+      <div style={{ display: "flex", flexDirection: "column" }}>
         {message.map((route, index) => (
-          <p key={index}>
-            {route.split("->").map((segment, index, array) => (
-              <React.Fragment key={index}>
-                {segment}
-                {index < array.length - 1 && <strong> -&gt; </strong>}
-              </React.Fragment>
-            ))}
-          </p>
+          <div key={index} style={{ display: "flex", alignItems: "center" }}>
+            {index !== 0 && (
+              <input
+                type="radio"
+                name="routeSelection"
+                onChange={(event) => handleCheckboxChange(event, index)}
+              />
+            )}
+            <p style={{ marginLeft: "5px" }}>
+              {route.split("->").map((segment, index, array) => (
+                <React.Fragment key={index}>
+                  {segment}
+                  {index < array.length - 1 && <strong> -&gt; </strong>}
+                </React.Fragment>
+              ))}
+            </p>
+          </div>
         ))}
       </div>
       <hr className="horizontal-line"></hr>
