@@ -610,9 +610,9 @@ const SkiResortMap = () => {
           for (var j = 0; j < msg_array.length; j++) {
             if (msg_array.length > 1) {
               if (j == longgest_index) {
-                msg_array[j] += " --Longgest Route";
+                msg_array[j] += " :Longest Route";
               } else if (j == shortest_index) {
-                msg_array[j] += " --shortest Route";
+                msg_array[j] += " :Shortest Route";
               }
             }
             msg_array[j] += "<br/>";
